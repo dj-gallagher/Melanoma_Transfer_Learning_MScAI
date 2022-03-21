@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --nodes=1
-#SBATCH --partition=photonq-GPU
+#SBATCH -p shareq
 #SBATCH --ntasks=8
 #SBATCH --mem 48G
 #SBATCH --time=08:00:00
