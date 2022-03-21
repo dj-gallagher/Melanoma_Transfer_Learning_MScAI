@@ -215,11 +215,11 @@ def create_lr_scheduler_cb():
     Callbacl function to drop LR by factor of 10 at
     the 5th and 10th epoch
     """
-    def scheduler(epoch, lr):
+    def scheduler(epoch, learning_rate):
         if epoch % 5 == 0:
-            return lr * 0.1
+            return learning_rate * 0.1
         else:
-            return lr
+            return learning_rate
     cb = keras.callbacks.LearningRateScheduler(schedule=scheduler, verbose=1)
     
     return cb
@@ -246,7 +246,7 @@ def train_model(model, train, val):
         
     model.fit(train, 
               #batch_size=batch_size,
-              epochs=21,
+              epochs=15,
               steps_per_epoch=(train_size//batch_size), # should be a number s.t. (steps*batch_size)=num_training_egs
               validation_data=val, 
               validation_steps=(val_size//batch_size),
