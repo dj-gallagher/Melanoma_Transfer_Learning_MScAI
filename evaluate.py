@@ -1,56 +1,37 @@
-from preprocessing import create_tf_dataset, rescale_and_resize_image
-import tensorflow as tf
+from sympy import primitive
+from preprocessing import read_test_csv_to_dataset, rescale_and_resize
 import numpy as np
+import pandas as pd
 from tensorflow import keras
+import tensorflow as tf
 
-from pprint import pprint
-import matplotlib.pyplot as plt
-import cv2
+from math import ceil
+from sklearn.metrics import accuracy_score
 
-def rescale_and_resize(ds, training_set):
-    """Maps the rescale_and_resize_image function to the dataset."""
+def evaluate_model(model):
 
-    # Map dataset.
-    ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+    test_ds, test_size, y_true = read_test_csv_to_dataset()
     
-    if training_set:
-        ds = (ds
-                .shuffle(buffer_size=128, seed=42) # size of dataset for perfect shuffling, set a seed here later
-                .batch(32)
-                .repeat()
-                )
-    else:
-        #ds = ds.batch(1).repeat()
-        pass
+    batch_size = 32
+    test_steps = ceil(test_size / batch_size)
     
-    return ds
+    test = rescale_and_resize(ds=test_ds,
+                              ds_size=test_size,
+                              batch_size=32,
+                              training_set=False)
 
-def evaluate_model(model, dataset):
+    y_pred = model.predict(test,
+                steps=test_steps,
+                verbose=1)
     
-    #model.evaluate(dataset)
-    predictions = []
-    labels = []
+    np.savetxt(fname="./output/results/test_predictions.csv",
+               X=y_pred,
+               delimiter=",")
     
-    for feature, label in dataset:
-        prediction = model.predict(feature.numpy().reshape((-1,224,224,3)))
-        predictions.append(prediction)
-    pprint(predictions)
-
-if __name__ == '__main__':
-
-    train, val = create_tf_dataset()
-
-    val_data = rescale_and_resize(val, training_set=False)
-
-    model = keras.models.load_model( "./output/models/ResNet50_Hosseinzadeh_et_al_ResNet50_Hosseinzadeh_et_al_20220309-191906" )
-
-    evaluate_model(model, val_data)
-    '''
-    counter = 0
-    for feature, label in val_data:
-        cv2.imshow("blan", feature.numpy())
-        cv2.waitKey()
-        counter += 1
-        if counter == 5:
-            break
-    '''
+    #df = pd.read_csv("./output/results/test_predictions.csv", header=None)
+    #y_pred = df.to_numpy()
+    #y_pred = (y_pred > 0.5)
+    
+    print("\n" , "TEST SET ACCURACY: ")
+    print( "\t-> " , str(accuracy_score(y_true, y_pred)) )
+    

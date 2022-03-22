@@ -9,17 +9,20 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 
-def create_tf_dataset():
+def create_train_val_tf_dataset():
     """
     Reads in metadata, generates filepaths and creates tensorflow dataset objects.
     
     Returns TF dataset with features as filepaths, labels as OneHotEnc vectors
     """
     
-    # Read metadata and create column with filepaths
+    # Read metadata csv and create column with filepaths
     train_df = pd.read_csv("./metadata/train.csv")
     train_df["image_path"] = "./images/train/" + train_df["image_id"] + ".jpg"
     train_image_paths = train_df["image_path"]
+    
+    # Number of training examples
+    train_size = train_df.shape[0]
     
     # Extract OneHot Labels
     train_labels = train_df.iloc[:,1:4] 
@@ -33,13 +36,31 @@ def create_tf_dataset():
     val_df["image_path"] = "./images/val/" + val_df["image_id"] + ".jpg"
     val_image_paths = val_df["image_path"]
     val_labels = val_df.iloc[:,1:4] 
+    val_size = val_df.shape[0]
     
     val_ds = tf.data.Dataset.from_tensor_slices( (val_image_paths.values, val_labels.values) )
     
     
-    return train_ds, val_ds
+    return train_ds, train_size, val_ds, val_size
+
+def read_test_csv_to_dataset():  
     
+    # Read metadata csv and create column with filepaths
+    test_df = pd.read_csv("./metadata/test.csv")
+    test_df["image_path"] = "./images/test/" + test_df["image_id"] + ".jpg"
+    test_image_paths = test_df["image_path"]
     
+    # Number of test examples
+    test_size = test_df.shape[0]
+    
+    # Extract OneHot Labels
+    test_labels = test_df.iloc[:,1:4] 
+    
+    # Create dataset object with features = filepaths, labels = OneHot vectors
+    test_ds = tf.data.Dataset.from_tensor_slices( (test_image_paths.values, test_labels.values) )
+
+    return test_ds, test_size, test_labels.values
+
 
 def rescale_and_resize_image(file_path, label, width, height): 
     """
@@ -63,26 +84,37 @@ def rescale_and_resize_image(file_path, label, width, height):
 
     return image, label
 
-'''
-def rescale_and_resize(ds, training_set):
-    """Maps the rescale_and_resize_image function to the dataset."""
 
-    # Map dataset.
-    ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+def rescale_and_resize(ds, ds_size, batch_size, training_set):
+    """Maps the rescale_and_resize_image function to the dataset."""
+    
     
     if training_set:
+        # Shuffle and repeat the dataset when it is just filepaths first, otherwise shuffling would be 
+        # applied to loaded images which takes long
         ds = (ds
-                .shuffle(buffer_size=128, seed=42) # size of dataset for perfect shuffling, set a seed here later
-                .batch(32)
+                .shuffle(buffer_size=ds_size, seed=42) 
                 .repeat()
                 )
-    else:
+        
+        # Map image preprocessing/augmentation to dataset.
+        ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+        
         ds = (ds
-                .batch(150)
-                .repeat()
+                .batch(batch_size)
+                .prefetch(100)
+                )
+    else:
+        # Map image preprocessing/augmentation to dataset.
+        ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+        
+        ds = (ds
+                .batch(batch_size)
+                .prefetch(100)
                 )
     
     return ds
+
 '''
 def rescale_and_resize(ds, training_set):
     """Maps the rescale_and_resize_image function to the dataset."""
@@ -98,20 +130,21 @@ def rescale_and_resize(ds, training_set):
             )
     
     return ds
-
+'''
 
 def run_preprocessing():
-    
     """
     Returns training validation split as TF dataset objects. 
     Features are numpy arrays representing skin lesion images.
     Labels are OneHotEnc vectors. 
     """
+    # For batching the tf dataset objects
+    batch_size = 32
     
-    train, val = create_tf_dataset()
+    train, train_size, val, val_size = create_train_val_tf_dataset()
     
-    train = rescale_and_resize(train, training_set=True)
-    val = rescale_and_resize(val, training_set=False)
+    train = rescale_and_resize(train, train_size, batch_size, training_set=True)
+    val = rescale_and_resize(val, val_size, batch_size, training_set=False)
 
     return train, val
     
@@ -141,9 +174,17 @@ def train_val_split():
 
     return train, val
 
-#ds = rescale_and_resize( create_tf_dataset() )
-
-# To check data is read in correctly
-#plt.imshow( next(iter(ds))[0][0,:,:,:] )   
-#plt.show()
+#if __name__ == '__main__':
+    #test_ds, test_size = read_test_csv_to_dataset()
+    
+    #test, fps = rescale_and_resize(ds=test_ds,
+    #                          ds_size=test_size,
+    #                          batch_size=32,
+    #                          training_set=False)
+    
+    #feature_name, _ = (next(iter(fps))) 
+    #plt.title(feature_name)
+    #plt.imshow( next(iter(test))[0][0,:,:,:] )   
+    #plt.show()
+    
     

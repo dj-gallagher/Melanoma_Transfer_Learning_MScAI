@@ -76,12 +76,12 @@ def ResNet50_Mahbod():
     block_17_layers = [ model.get_layer(name=name) for name in block_17_names ]
     new_fc_layers = model.layers[-3:]
     
-    # Create LR multiplier dict arguemnt
-    LR_mult_dict = {}
-    for layer in block_17_layers:
-        LR_mult_dict[layer.name] = 1.0
-    for layer in new_fc_layers:
-        LR_mult_dict[layer.name] = 10.0
+    #       Create LR multiplier dict arguemnt
+    #       LR_mult_dict = {}
+    #       for layer in block_17_layers:
+#               LR_mult_dict[layer.name] = 1.0
+    #       for layer in new_fc_layers:
+    #           LR_mult_dict[layer.name] = 10.0
     
     # (Optimizer, layer) pairs 
     block_17_optimizers_and_layers = [  (optimizers[0],layer) for layer in block_17_layers ]
@@ -89,8 +89,8 @@ def ResNet50_Mahbod():
     optimizers_and_layers = block_17_optimizers_and_layers + new_fc_optimizers_and_layers
     
     # Optimizer with different learning rates across layers
-    #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
-    optimizer = LRMultiplier( keras.optimizers.Adam(learing_rate=pretrained_lr), LR_mult_dict )
+    optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
+    #optimizer = LRMultiplier( keras.optimizers.Adam(learing_rate=pretrained_lr), LR_mult_dict )
     
     # LOSS FUNCTION AND METRICS
     # -------------------------------------
