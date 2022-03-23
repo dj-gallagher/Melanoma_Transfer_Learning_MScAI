@@ -96,12 +96,12 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
         if augment:
         
             # Map image preprocessing and augmentation to dataset.
+            ds = ds.shuffle(buffer_size=ds_size, seed=42) 
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
             ds, ds_size = augment_dataset(ds, ds_size)
             
             # Shuffle, repeat etc.
             ds = (ds
-                    .shuffle(buffer_size=ds_size, seed=42) 
                     .repeat()
                     .batch(batch_size)
                     .prefetch(100)

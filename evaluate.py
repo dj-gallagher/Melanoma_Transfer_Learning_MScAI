@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from tensorflow import keras
 import tensorflow as tf
+from model import ResNet50_Mahbod
 
 from math import ceil
 from sklearn.metrics import accuracy_score
@@ -18,7 +19,7 @@ def evaluate_model(model, timestamp):
                               ds_size=test_size,
                               batch_size=32,
                               training_set=False)
-
+    
     y_pred = model.predict(test,
                 steps=test_steps,
                 verbose=1)
