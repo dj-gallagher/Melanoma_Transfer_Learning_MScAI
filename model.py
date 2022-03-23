@@ -250,7 +250,7 @@ def train_model(model, train, val):
     #callbacks_list = [create_checkpoint_callback(), create_tensorboard_callback()]
     cb_tensorboard = create_tensorboard_callback(model.name)
     cb_lr_schedule = create_lr_scheduler_cb()
-    cb_list = [cb_tensorboard, cb_lr_schedule]
+    cb_list = [cb_tensorboard]
         
     model.fit(train, 
               #batch_size=batch_size,
