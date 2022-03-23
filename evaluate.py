@@ -1,4 +1,3 @@
-from sympy import primitive
 from preprocessing import read_test_csv_to_dataset, rescale_and_resize
 import numpy as np
 import pandas as pd

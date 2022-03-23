@@ -274,14 +274,14 @@ def train_model(model, train, train_size, val, val_size):
 def save_model(trained_model, timestamp):
     
     #trained_model.save( "./output/models/" + f"{trained_model.name}_{timestamp}")
-    trained_model.save( "./output/models/" + f"{trained_model.name}_{timestamp}")
+    trained_model.save( "./output/models/" + f"{trained_model.name}_{timestamp}", include_optimizer=False)
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
     
-if __name__ == '__main__':
-    model = ResNet50_Hosseinzadeh()
-    print(model.summary())
+        #if __name__ == '__main__':
+        #    model = ResNet50_Hosseinzadeh()
+        #    print(model.summary())
     
 
     

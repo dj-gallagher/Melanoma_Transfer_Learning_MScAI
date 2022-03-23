@@ -7,15 +7,12 @@ from model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman, tr
 if __name__ == '__main__':
     
     # Create training and validation sets from metadata and images folder
-    train, train_size, val, val_size = run_preprocessing()
+    train, train_size, val, val_size = run_preprocessing(augment=True)
     
     # Create a model, pass run id as arguement
     #model = ResNet50_Hosseinzadeh()
     model = ResNet50_Mahbod()
     #model = ResNet152V2_Rahman()
-    
-    # Change model name for experiment to be run
-    #model.name = "ResNet50_Mahbod_DifferentLR_Run_1"
     
     # To mark when training began, used for saving the model at the end of training
     training_start_timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
