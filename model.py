@@ -238,12 +238,10 @@ def create_lr_scheduler_cb():
 # MODEL TRAINING 
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def train_model(model, train, val):
+def train_model(model, train, train_size, val, val_size):
     
     # Values for ISIC 2017, will have to make this automatic later
     # Used to calcualte how many steps per epoch and per validation 
-    train_size = 2000
-    val_size = 150
     batch_size = 32
     
     # Create list of callback functions

@@ -146,7 +146,7 @@ def run_preprocessing():
     train = rescale_and_resize(train, train_size, batch_size, training_set=True)
     val = rescale_and_resize(val, val_size, batch_size, training_set=False)
 
-    return train, val
+    return train, train_size, val, val_size
     
     
 def train_val_split():

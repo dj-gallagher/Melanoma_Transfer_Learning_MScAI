@@ -1,13 +1,13 @@
 import datetime
 from preprocessing import run_preprocessing
-#from evaluate import evaluate_model
+from evaluate import evaluate_model
 from model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman, train_model, save_model
 
 
 if __name__ == '__main__':
     
     # Create training and validation sets from metadata and images folder
-    train, val = run_preprocessing()
+    train, train_size, val, val_size = run_preprocessing()
     
     # Create a model
     #model = ResNet50_Hosseinzadeh()
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     training_start_timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     
     # Train the model, logging training data with TensorBoard callback
-    model = train_model(model, train, val)
+    model = train_model(model, train, train_size, val, val_size)
     
     # Save the trained model
     save_model(model, training_start_timestamp)
