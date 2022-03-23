@@ -48,13 +48,15 @@ def read_test_csv_to_dataset():
     # Read metadata csv and create column with filepaths
     test_df = pd.read_csv("./metadata/test.csv")
     test_df["image_path"] = "./images/test/" + test_df["image_id"] + ".jpg"
-    test_image_paths = test_df["image_path"]
+    #test_image_paths = test_df["image_path"]
+    test_image_paths = test_df["image_path"][:2]
     
     # Number of test examples
     test_size = test_df.shape[0]
     
     # Extract OneHot Labels
-    test_labels = test_df.iloc[:,1:4] 
+    #test_labels = test_df.iloc[:,1:4] 
+    test_labels = test_df.iloc[:,1:4][:2] 
     
     # Create dataset object with features = filepaths, labels = OneHot vectors
     test_ds = tf.data.Dataset.from_tensor_slices( (test_image_paths.values, test_labels.values) )

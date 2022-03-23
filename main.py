@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # Create training and validation sets from metadata and images folder
     train, train_size, val, val_size = run_preprocessing()
     
-    # Create a model
+    # Create a model, pass run id as arguement
     #model = ResNet50_Hosseinzadeh()
     model = ResNet50_Mahbod()
     #model = ResNet152V2_Rahman()

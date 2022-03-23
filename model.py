@@ -1,5 +1,3 @@
-from pprint import pprint
-from tabnanny import verbose
 import tensorflow as tf
 from tensorflow import keras
 import datetime
@@ -11,7 +9,7 @@ from keras_lr_multiplier import LRMultiplier
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Mahbod():
+def ResNet50_Mahbod(model_name):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -38,7 +36,7 @@ def ResNet50_Mahbod():
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
-                               name="ResNet50_Mahbod") 
+                               name=model_name) 
     
     
     
@@ -108,7 +106,7 @@ def ResNet50_Mahbod():
     return model
 
 
-def ResNet50_Hosseinzadeh():
+def ResNet50_Hosseinzadeh(model_name):
     
     # DEFINING MODEL LAYERS
     # ---------------------------
@@ -116,7 +114,7 @@ def ResNet50_Hosseinzadeh():
                                                       weights="imagenet",
                                                       input_shape=(224,224,3))
     
-    base_model.trainable = False # Blocks 1-17 Frozen as in Hosseinzadeh et al.
+    base_model.trainable = True 
 
     # Define output layers 
     x = base_model.output
@@ -129,29 +127,35 @@ def ResNet50_Hosseinzadeh():
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
-                               name="ResNet50_Hosseinzadeh") 
+                               name=model_name) 
 
-    #pprint( [ layer.trainable for layer in model.layers ] )
 
-    # COMPILING THE MODEL
-    # ---------------------------
-    lr = math.e # 10x all other layers
-    #lr_schedule = [0.001, 0.0001, 0.00001] # drop by 10x factor at epoch 5 and 10
-
-    optimiser = keras.optimizers.Adam(learning_rate=lr)
+    # OPTIMIZERS
+    # -------------------------------------    
+    optimizer = tfa.optimizers.AdamW(weight_decay=(math.e)**(-5),
+                                     learning_rate=(math.e)**(-5),
+                                     beta_1=0.9,
+                                     beta_2=0.999,
+                                     epsilon=(math.e)**(-8))
+    
+    # LOSS FUNCTION AND METRICS
+    # -------------------------------------
     loss_func = keras.losses.CategoricalCrossentropy()
     metrics_list = ['accuracy',
                     keras.metrics.AUC( multi_label=True )] 
-
-    model.compile(optimizer=optimiser ,
+    
+    
+    # COMPILE EVERYTHING
+    # -------------------------------------
+    model.compile(optimizer=optimizer ,
                 loss=loss_func ,
-                metrics=metrics_list)  
+                metrics=metrics_list)
                 
 
     return model
     
 
-def ResNet152V2_Rahman():
+def ResNet152V2_Rahman(model_name):
     
     # DEFINING MODEL LAYERS
     # ---------------------------
@@ -171,7 +175,7 @@ def ResNet152V2_Rahman():
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
-                               name="ResNet152V2_Rahman") 
+                               name=model_name) 
     
     # COMPILING THE MODEL
     # ---------------------------
@@ -276,8 +280,9 @@ def save_model(trained_model, timestamp):
 
     
 if __name__ == '__main__':
-    model = ResNet50_Mahbod()
-    #print(model.summary())
+    model = ResNet50_Hosseinzadeh()
+    print(model.summary())
+    
 
     
     
