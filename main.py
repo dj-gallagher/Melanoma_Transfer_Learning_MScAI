@@ -17,7 +17,7 @@ if __name__ == '__main__':
     #model = ResNet152V2_Rahman()
     
     # Change model name for experiment to be run
-    model.name = "ResNet50_Mahbod_DifferentLR_Run_1"
+    #model.name = "ResNet50_Mahbod_DifferentLR_Run_1"
     
     # To mark when training began, used for saving the model at the end of training
     training_start_timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -29,6 +29,6 @@ if __name__ == '__main__':
     save_model(model, training_start_timestamp)
     
     # Find test set accuracy and save predictions
-    #evaluate_model(model)
+    evaluate_model(model, training_start_timestamp)
     
     
