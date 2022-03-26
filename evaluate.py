@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from tensorflow import keras
 import tensorflow as tf
-from model import ResNet50_Mahbod
 
 from math import ceil
 from sklearn.metrics import accuracy_score
@@ -18,8 +17,9 @@ def evaluate_model(model, timestamp):
     test = rescale_and_resize(ds=test_ds,
                               ds_size=test_size,
                               batch_size=32,
-                              training_set=False)
-    
+                              training_set=False,
+                              augment=False)
+    '''
     y_pred = model.predict(test,
                 steps=test_steps,
                 verbose=1)
@@ -30,7 +30,6 @@ def evaluate_model(model, timestamp):
     
     #df = pd.read_csv("./output/results/predictions/test_predictions.csv", header=None)
     #y_pred = df.to_numpy()
-    y_pred = (y_pred > 0.5)
     
     acc =  accuracy_score(y_true, y_pred)
     
@@ -43,6 +42,12 @@ def evaluate_model(model, timestamp):
     print( "\t-> " , str( acc ) )
     
     results_df.to_csv( f"./output/results/metrics/{model.name}_{timestamp}_metrics.csv", index=False )
+    '''
+    
+    model.evaluate(test,
+                   verbose=1)
     
 #if __name__ == '__main__':
-    #evaluate_model(1,2)
+    
+    #model = keras.models.load_model("./output/models/Mahbod_BLine_Aug_Run_1_20220323-235430")
+    #evaluate_model(model, "now")

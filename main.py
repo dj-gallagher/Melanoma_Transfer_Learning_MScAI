@@ -18,10 +18,10 @@ if __name__ == '__main__':
     training_start_timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     
     # Train the model, logging training data with TensorBoard callback
-    model = train_model(model, train, train_size, val, val_size)
+    model = train_model(model, train, train_size, val, val_size, 1)
     
     # Save the trained model
-    save_model(model, training_start_timestamp)
+    #save_model(model, training_start_timestamp)
     
     # Find test set accuracy and save predictions
     evaluate_model(model, training_start_timestamp)

@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from math import ceil
 
-from preprocessing import read_test_csv_to_dataset, rescale_and_resize
-
 '''test_ds, test_size, test_labels = read_test_csv_to_dataset()
 
 batch_size = 32

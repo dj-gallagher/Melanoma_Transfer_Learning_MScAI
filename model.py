@@ -3,7 +3,7 @@ from tensorflow import keras
 import datetime
 import math
 import tensorflow_addons as tfa
-from keras_lr_multiplier import LRMultiplier
+#from keras_lr_multiplier import LRMultiplier
 
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ def create_tensorboard_callback(model_name):
                                                        histogram_freq=1)
     
     return tensorboard_callback
-
+'''
 def create_lr_scheduler_cb():
     """
     Callback function to drop LR by factor of 10 at
@@ -235,6 +235,7 @@ def create_lr_scheduler_cb():
     cb = keras.callbacks.LearningRateScheduler(schedule=scheduler, verbose=1)
     
     return cb
+'''
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
@@ -242,21 +243,21 @@ def create_lr_scheduler_cb():
 # MODEL TRAINING 
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def train_model(model, train, train_size, val, val_size):
+def train_model(model, train, train_size, val, val_size, num_epochs):
     
     # Values for ISIC 2017, will have to make this automatic later
     # Used to calcualte how many steps per epoch and per validation 
     batch_size = 32
     
     # Create list of callback functions
-    #callbacks_list = [create_checkpoint_callback(), create_tensorboard_callback()]
+    checkpoint_cb = create_checkpoint_callback()
     cb_tensorboard = create_tensorboard_callback(model.name)
-    cb_lr_schedule = create_lr_scheduler_cb()
-    cb_list = [cb_tensorboard]
+    #cb_lr_schedule = create_lr_scheduler_cb()
+    cb_list = [cb_tensorboard, checkpoint_cb]
         
     model.fit(train, 
               #batch_size=batch_size,
-              epochs=15,
+              epochs=num_epochs,
               steps_per_epoch=(train_size//batch_size), # should be a number s.t. (steps*batch_size)=num_training_egs
               validation_data=val, 
               validation_steps=(val_size//batch_size),
