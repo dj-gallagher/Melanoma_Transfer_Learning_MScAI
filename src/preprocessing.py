@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from augment import augment_dataset
+from src.augment import augment_dataset
 
 def create_train_val_tf_dataset():
     """
@@ -65,8 +65,8 @@ def read_test_csv_to_dataset():
 def read_HAM10000_csv_to_dataset():
     
     # Read in filepaths and labels
-    train_df = pd.read_csv("../metadata/train.csv")
-    test_df = pd.read_csv("../metadata/test.csv")
+    train_df = pd.read_csv("./metadata/train.csv")
+    test_df = pd.read_csv("./metadata/test.csv")
 
     # Record dataset sizes for later use
     train_size = train_df.shape[0]

@@ -122,7 +122,7 @@ def ResNet50_Hosseinzadeh(model_name):
     x = keras.layers.Dropout(rate=0.5)(x)
     x = keras.layers.Dense(units=64, activation="relu")(x)
     x = keras.layers.Dropout(rate=0.5)(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
+    predictions = keras.layers.Dense(units=7, activation="softmax")(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
