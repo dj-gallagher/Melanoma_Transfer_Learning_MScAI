@@ -1,8 +1,8 @@
-import tensorflow as tf
 from tensorflow import keras
 import datetime
 import math
 import tensorflow_addons as tfa
+import os
 #from keras_lr_multiplier import LRMultiplier
 
 # BASELINE MODEL FUNCTIONS
@@ -200,13 +200,14 @@ def ResNet152V2_Rahman(model_name):
 # CALLBACKS
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def create_checkpoint_callback():
+def create_checkpoint_callback(model_name):
     # SAVE WEIGHTS DURING TRAINING
-    checkpoint_path = "./output/training_ckpts/cp.ckpt"
+    checkpoint_path = f"./output/training_ckpts/{model_name}/cp.ckpt"
     #checkpoint_dir = os.path.dirname(checkpoint_path)
 
     # Create a callback that saves the model's weights
     cp_callback = keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                  save_freq="epoch",
                                                   save_weights_only=True,
                                                   verbose=1)    
     
@@ -214,7 +215,7 @@ def create_checkpoint_callback():
 
 
 def create_tensorboard_callback(model_name):
-    log_dir = "./output/logs/fit/" + model_name + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_dir = "./output/logs/fit/" + model_name #+ "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir,  
                                                        update_freq="epoch",
                                                        histogram_freq=1)
@@ -245,18 +246,21 @@ def create_lr_scheduler_cb():
 # ------------------------------------------------------------------------------------------------
 def train_model(model, train, train_size, val, val_size, num_epochs):
     
+    # Create directories to store training data from callbacks
+    os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
+    os.mkdir(f"./output/training_ckpts/{model.name}") # checkpoint cb
+    
     # Values for ISIC 2017, will have to make this automatic later
     # Used to calcualte how many steps per epoch and per validation 
     batch_size = 32
     
     # Create list of callback functions
-    checkpoint_cb = create_checkpoint_callback()
+    checkpoint_cb = create_checkpoint_callback(model.name)
     cb_tensorboard = create_tensorboard_callback(model.name)
     #cb_lr_schedule = create_lr_scheduler_cb()
     cb_list = [cb_tensorboard, checkpoint_cb]
         
     model.fit(train, 
-              #batch_size=batch_size,
               epochs=num_epochs,
               steps_per_epoch=(train_size//batch_size), # should be a number s.t. (steps*batch_size)=num_training_egs
               validation_data=val, 
@@ -279,11 +283,6 @@ def save_model(trained_model, timestamp):
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-    
-        #if __name__ == '__main__':
-        #    model = ResNet50_Hosseinzadeh()
-        #    print(model.summary())
-    
 
     
     

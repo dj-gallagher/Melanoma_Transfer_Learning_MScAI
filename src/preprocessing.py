@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from augment import augment_dataset
+from src.augment import augment_dataset
 
 def create_train_val_tf_dataset():
     """

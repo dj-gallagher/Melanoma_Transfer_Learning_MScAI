@@ -1,7 +1,7 @@
 import datetime
-from preprocessing import run_preprocessing
-from evaluate import evaluate_model
-from model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman, train_model, save_model
+from src.preprocessing import run_preprocessing
+from src.evaluate import evaluate_model
+from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman, train_model, save_model
 
 
 if __name__ == '__main__':
