@@ -7,11 +7,11 @@ from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman
 if __name__ == '__main__':
     
     # Create training and validation sets from metadata and images folder
-    train, train_size, val, val_size = run_preprocessing(augment=True)
+    train, train_size, val, val_size = run_preprocessing(augment="Hosseinzadeh")
     
     # Create a model, pass run id as arguement
-    #model = ResNet50_Hosseinzadeh()
-    model = ResNet50_Mahbod()
+    model = ResNet50_Hosseinzadeh()
+    #model = ResNet50_Mahbod()
     #model = ResNet152V2_Rahman()
     
     # To mark when training began, used for saving the model at the end of training

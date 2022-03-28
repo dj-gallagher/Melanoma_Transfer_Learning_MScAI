@@ -1,4 +1,4 @@
-from src.preprocessing import read_test_csv_to_dataset, rescale_and_resize
+from src.preprocessing import read_test_csv_to_dataset, read_HAM10000_csv_to_dataset, rescale_and_resize
 import pandas as pd
 from tensorflow import keras
 import os
@@ -9,6 +9,7 @@ def evaluate_model(model, timestamp):
     
     # Load file paths of test images to a tf dataset
     test_ds, test_size, y_true = read_test_csv_to_dataset()
+    #train_ds, train_size, test, test_size = read_HAM10000_csv_to_dataset()
     
     # Batch size the same as training set
     batch_size = 32

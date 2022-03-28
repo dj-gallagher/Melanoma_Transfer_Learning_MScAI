@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from src.augment import augment_dataset
+from augment import augment_dataset
 
 def create_train_val_tf_dataset():
     """
@@ -55,7 +55,6 @@ def read_test_csv_to_dataset():
     test_size = test_df.shape[0]
     
     # Extract OneHot Labels
-    #test_labels = test_df.iloc[:,1:4] 
     test_labels = test_df.iloc[:,1:4] 
     
     # Create dataset object with features = filepaths, labels = OneHot vectors
@@ -63,6 +62,30 @@ def read_test_csv_to_dataset():
 
     return test_ds, test_size, test_labels.values
 
+def read_HAM10000_csv_to_dataset():
+    
+    # Read in filepaths and labels
+    train_df = pd.read_csv("../metadata/train.csv")
+    test_df = pd.read_csv("../metadata/test.csv")
+
+    # Record dataset sizes for later use
+    train_size = train_df.shape[0]
+    test_size = test_df.shape[0]
+
+    # Extract filepaths for creating tf dataset
+    train_image_paths = "./images/HAM10000/" + train_df["image_id"] + ".jpg"
+    test_image_paths = "./images/HAM10000/" + test_df["image_id"] + ".jpg"
+    
+    # Extract OneHot Labels for creating tf dataset
+    train_labels = train_df.iloc[:,1:] 
+    test_labels = test_df.iloc[:,1:] 
+    
+    # Create tf dataset objects
+    train_ds = tf.data.Dataset.from_tensor_slices( (train_image_paths.values, train_labels.values) )
+    test_ds = tf.data.Dataset.from_tensor_slices( (test_image_paths.values, test_labels.values) )
+    
+    return train_ds, train_size, test_ds, test_size
+    
 
 def rescale_and_resize_image(file_path, label, width, height): 
     """
@@ -93,12 +116,12 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
     
     if training_set:
         
-        if augment:
+        if augment=="Mahbod" or augment=="Hosseinzadeh":
         
             # Map image preprocessing and augmentation to dataset.
             ds = ds.shuffle(buffer_size=ds_size, seed=42) 
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
-            ds, ds_size = augment_dataset(ds, ds_size)
+            ds, ds_size = augment_dataset(ds, ds_size, augment)
             
             # Shuffle, repeat etc.
             ds = (ds
@@ -135,7 +158,6 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
 
 
 
-
 def run_preprocessing(augment):
     """
     Returns training validation split as TF dataset objects. 
@@ -146,10 +168,13 @@ def run_preprocessing(augment):
     batch_size = 32
     
     train, train_size, val, val_size = create_train_val_tf_dataset()
+    #train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
     
     train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
     val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
-
+    
     return train, train_size, val, val_size
     
+#if __name__ == '__main__':
+#    train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
     

@@ -97,7 +97,7 @@ def ResNet50_Mahbod(model_name):
                     keras.metrics.AUC( multi_label=True )] 
     
     
-    # COMPILE EVERYTHING
+    # COMPILE 
     # -------------------------------------
     model.compile(optimizer=optimizer ,
                 loss=loss_func ,
@@ -112,7 +112,7 @@ def ResNet50_Hosseinzadeh(model_name):
     # ---------------------------
     base_model = keras.applications.resnet50.ResNet50(include_top=False,
                                                       weights="imagenet",
-                                                      input_shape=(224,224,3))
+                                                      input_shape=(225,300,3))
     
     base_model.trainable = True 
 
@@ -145,7 +145,7 @@ def ResNet50_Hosseinzadeh(model_name):
                     keras.metrics.AUC( multi_label=True )] 
     
     
-    # COMPILE EVERYTHING
+    # COMPILE 
     # -------------------------------------
     model.compile(optimizer=optimizer ,
                 loss=loss_func ,

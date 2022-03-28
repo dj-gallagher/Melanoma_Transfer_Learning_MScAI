@@ -8,6 +8,7 @@ source: https://stackoverflow.com/questions/51136559/mixing-augmented-and-origin
 """
 
 import matplotlib.pyplot as plt
+from numpy import True_
 import tensorflow as tf
 from math import ceil
 
@@ -106,53 +107,67 @@ def augment_image(image, label,
     '''
     return image, label
 
-def augment_dataset(ds, ds_size):
+def augment_dataset(ds, ds_size, augment):
     """
     Must be applied to an unbatched, no repeating tf dataset.
     """
 
+    if augment=="Mahbod":
+        ds_size = ds_size*8
+        
+        # rotation by 90
+        aug_1 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
+        
+        # rotation by 180
+        aug_2 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
+        
+        # rotation by 270
+        aug_3 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
+        
+        # flip horizontal
+        aug_4 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
+        
+        # flip rot 90
+        aug_5 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
+                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        
+        # flip rot 180
+        aug_6 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
+                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
 
-    ds_size = ds_size*8
-    
-    # rotation by 90
-    aug_1 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
-    
-    # rotation by 180
-    aug_2 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
-    
-    # rotation by 270
-    aug_3 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
-    
-    # flip horizontal
-    aug_4 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
-    
-    # flip rot 90
-    aug_5 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
-             .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
-    
-    # flip rot 180
-    aug_6 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
-             .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        # flip rot 270
+        aug_7 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
+                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
 
-    # flip rot 270
-    aug_7 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
-             .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        ds = (ds.concatenate(aug_1)
+                .concatenate(aug_2)
+                .concatenate(aug_3)
+                .concatenate(aug_4)
+                .concatenate(aug_5)
+                .concatenate(aug_6)
+                .concatenate(aug_7))
+        
+    elif augment=="Hosseinzadeh":
+        
+        ds_size = ds_size*4
+        
+        # horizontal flip
+        aug_1 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
+        
+        # vertical flip
+        aug_2 = ds.map( lambda image, label: augment_image(image, label, vertical_flip=True) )
+        
+        # random brightness
+        #aug_3 = ds.map( lambda image, label: augment_image(image, label, brightness=True) )
+        
+        # random contrast
+        #aug_4 = ds.map( lambda image, label: augment_image(image, label, contrast=True) )
+        
+        ds = (ds.concatenate(aug_1)
+                .concatenate(aug_2))
 
+
+            
+    
     # Return all datesets combined and new dataset size
-    return ds.concatenate(aug_1).concatenate(aug_2).concatenate(aug_3).concatenate(aug_4).concatenate(aug_5).concatenate(aug_6).concatenate(aug_7), ds_size
-
-
-
-
-
-
-          #augmented = test.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
-
-'''aug_ds, ds_size = augment_dataset(test, test_size)
-
-for im, lb in aug_ds:
-  plt.imshow(im.numpy())
-  plt.show()'''
-
-
-
+    return ds, ds_size
