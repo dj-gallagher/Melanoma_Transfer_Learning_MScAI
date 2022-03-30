@@ -106,6 +106,9 @@ def rescale_and_resize_image(file_path, label, width, height):
     image = tf.image.convert_image_dtype(image, tf.float32)
     # Resize shape to model input dimensions
     image = tf.image.resize(image, [width, height])
+    
+    # Standardize image
+    image = tf.image.per_image_standardization(image)
 
     return image, label
 
