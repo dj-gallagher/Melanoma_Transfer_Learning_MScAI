@@ -94,7 +94,8 @@ def ResNet50_Mahbod(model_name):
     optimizers_and_layers = block_17_optimizers_and_layers + new_fc_optimizers_and_layers
     
     # Optimizer with different learning rates across layers
-    optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
+    #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
+    optimizer = keras.optimizers.Adam(learning_rate=pretrained_lr)
     # ---------------------------
     
     # LOSS FUNCTION AND METRICS
