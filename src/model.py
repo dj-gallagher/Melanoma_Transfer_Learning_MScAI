@@ -63,8 +63,8 @@ def ResNet50_Mahbod(model_name):
     # OPTIMIZERS
     # -------------------------------------
     # Different LR for pretrained and FC layers
-    #pretrained_lr = 0.0001 
-    #new_lr = 10 * pretrained_lr 
+    pretrained_lr = 0.0001 
+    new_lr = 10 * pretrained_lr 
     
     # Set LR schedule
     num_epochs = 15
@@ -77,8 +77,8 @@ def ResNet50_Mahbod(model_name):
         values=[0.001, 0.0001, 0.00001]) # drop by factor of 10 each time
     
     # lr and wd can be a function or a tensor
-    pretrained_lr = schedule(step)
-    new_lr = 10 * schedule(step)
+    #pretrained_lr = schedule(step)
+    #new_lr = 10 * schedule(step)
     
     # Create multioptimizer -----
     optimizers = [keras.optimizers.Adam(learning_rate=pretrained_lr),
@@ -94,8 +94,8 @@ def ResNet50_Mahbod(model_name):
     optimizers_and_layers = block_17_optimizers_and_layers + new_fc_optimizers_and_layers
     
     # Optimizer with different learning rates across layers
-    #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
-    optimizer = keras.optimizers.Adam(learning_rate=pretrained_lr)
+    optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
+    #optimizer = keras.optimizers.Adam(learning_rate=pretrained_lr)
     # ---------------------------
     
     # LOSS FUNCTION AND METRICS
@@ -120,7 +120,7 @@ def ResNet50_Hosseinzadeh(model_name):
     # ---------------------------
     base_model = keras.applications.resnet50.ResNet50(include_top=False,
                                                       weights="imagenet",
-                                                      input_shape=(225,300,3))
+                                                      input_shape=(224,224,3))
     
     base_model.trainable = True 
 

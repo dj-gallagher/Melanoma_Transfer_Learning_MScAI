@@ -146,13 +146,22 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
                     .prefetch(100)
                     )
     else:
-        # Map image preprocessing/augmentation to dataset.
-        ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
-        
-        ds = (ds
-                .batch(batch_size)
-                .prefetch(100)
-                )
+        if augment=="Mahbod" or augment=="Hosseinzadeh":
+            # Map image preprocessing/augmentation to dataset.
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            ds, ds_size = augment_dataset(ds, ds_size, augment)
+            ds = (ds
+                    .batch(batch_size)
+                    .prefetch(100)
+                    )
+        else:
+            # Map image preprocessing/augmentation to dataset.
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            
+            ds = (ds
+                    .batch(batch_size)
+                    .prefetch(100)
+                    )
     
     return ds, ds_size
 
