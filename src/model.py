@@ -1,9 +1,9 @@
+import tensorflow as tf
 from tensorflow import keras
 import datetime
 import math
 import tensorflow_addons as tfa
 import os
-#from keras_lr_multiplier import LRMultiplier
 
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------
@@ -63,10 +63,24 @@ def ResNet50_Mahbod(model_name):
     # OPTIMIZERS
     # -------------------------------------
     # Different LR for pretrained and FC layers
-    pretrained_lr = 0.0001 
-    new_lr = 10 * pretrained_lr 
+    #pretrained_lr = 0.0001 
+    #new_lr = 10 * pretrained_lr 
     
-    # Create multioptimizer
+    # Set LR schedule
+    num_epochs = 15
+    steps_per_epoch = 16000 // 32 # train_size // batch_size
+    
+    step = tf.Variable(0, trainable=False)
+    
+    schedule = tf.optimizers.schedules.PiecewiseConstantDecay(
+        boundaries=[steps_per_epoch*5, steps_per_epoch*10], # drop LR at epoch 5 and 10
+        values=[0.001, 0.0001, 0.00001]) # drop by factor of 10 each time
+    
+    # lr and wd can be a function or a tensor
+    pretrained_lr = schedule(step)
+    new_lr = 10 * schedule(step)
+    
+    # Create multioptimizer -----
     optimizers = [keras.optimizers.Adam(learning_rate=pretrained_lr),
                   keras.optimizers.Adam(learning_rate=new_lr)]
     
@@ -74,21 +88,14 @@ def ResNet50_Mahbod(model_name):
     block_17_layers = [ model.get_layer(name=name) for name in block_17_names ]
     new_fc_layers = model.layers[-3:]
     
-    #       Create LR multiplier dict arguemnt
-    #       LR_mult_dict = {}
-    #       for layer in block_17_layers:
-#               LR_mult_dict[layer.name] = 1.0
-    #       for layer in new_fc_layers:
-    #           LR_mult_dict[layer.name] = 10.0
-    
     # (Optimizer, layer) pairs 
-    block_17_optimizers_and_layers = [  (optimizers[0],layer) for layer in block_17_layers ]
-    new_fc_optimizers_and_layers = [  (optimizers[1],layer) for layer in new_fc_layers ]
+    block_17_optimizers_and_layers =  [(optimizers[0], block_17_layers)]  #[  (optimizers[0],layer) for layer in block_17_layers ]
+    new_fc_optimizers_and_layers = [(optimizers[1], new_fc_layers)]  #[  (optimizers[1],layer) for layer in new_fc_layers ]
     optimizers_and_layers = block_17_optimizers_and_layers + new_fc_optimizers_and_layers
     
     # Optimizer with different learning rates across layers
     optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
-    #optimizer = LRMultiplier( keras.optimizers.Adam(learing_rate=pretrained_lr), LR_mult_dict )
+    # ---------------------------
     
     # LOSS FUNCTION AND METRICS
     # -------------------------------------

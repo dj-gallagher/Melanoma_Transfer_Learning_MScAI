@@ -6,24 +6,29 @@ from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman
 
 if __name__ == '__main__':
     
+    run_id = ""
+    num_epochs = 1 
+    augmentation = "" # Mahbod / Hosseinzadeh
+    dataset = "ISIC" # ISIC / HAM10000
+    
     # Create training and validation sets from metadata and images folder
-    train, train_size, val, val_size = run_preprocessing(augment="Hosseinzadeh")
+    train, train_size, val, val_size = run_preprocessing(augment=augmentation, dataset_name=dataset)
     
     # Create a model, pass run id as arguement
-    model = ResNet50_Hosseinzadeh()
-    #model = ResNet50_Mahbod()
-    #model = ResNet152V2_Rahman()
+    #model = ResNet50_Hosseinzadeh(run_id)
+    model = ResNet50_Mahbod(run_id)
+    #model = ResNet152V2_Rahman(run_id)
     
     # To mark when training began, used for saving the model at the end of training
     training_start_timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     
     # Train the model, logging training data with TensorBoard callback
-    model = train_model(model, train, train_size, val, val_size, 1)
+    model = train_model(model, train, train_size, val, val_size, num_epochs)
     
     # Save the trained model
     #save_model(model, training_start_timestamp)
     
     # Find test set accuracy and save predictions
-    evaluate_model(model, training_start_timestamp)
+    evaluate_model(model, training_start_timestamp, num_epochs, augmentation)
     
     

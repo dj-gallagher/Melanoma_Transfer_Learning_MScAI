@@ -5,7 +5,7 @@ import os
 
 from math import ceil
 
-def evaluate_model(model, timestamp):
+def evaluate_model(model, timestamp, num_epochs, augmentation):
     
     # Load file paths of test images to a tf dataset
     test_ds, test_size, y_true = read_test_csv_to_dataset()
@@ -20,10 +20,16 @@ def evaluate_model(model, timestamp):
                               ds_size=test_size,
                               batch_size=batch_size,
                               training_set=False,
-                              augment=False)
+                              augment=augmentation)
     
     # Evaluate model and save results in csv file
-    metrics_dict = model.evaluate(test, return_dict=True)
+    metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
+    
+    # Add extra information
+    metrics_dict["run_id"] = model.name
+    metrics_dict["Epochs"] = num_epochs
+    metrics_dict["Augmentation"] = augmentation
+    
     metrics_df = pd.DataFrame(metrics_dict, index=[0])
     
     os.mkdir(f"./output/results/{model.name}") # Directory for results

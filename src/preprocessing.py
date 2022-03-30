@@ -158,23 +158,31 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
 
 
 
-def run_preprocessing(augment):
+def run_preprocessing(augment, dataset_name):
     """
     Returns training validation split as TF dataset objects. 
     Features are numpy arrays representing skin lesion images.
     Labels are OneHotEnc vectors. 
     """
-    # For batching the tf dataset objects
-    batch_size = 32
+    if dataset_name == "ISIC":
+        # For batching the tf dataset objects
+        batch_size = 32
+        
+        train, train_size, val, val_size = create_train_val_tf_dataset()
+        #train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
+        
+        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
     
-    train, train_size, val, val_size = create_train_val_tf_dataset()
-    #train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
-    
-    train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
-    val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
+    elif dataset_name == "HAM10000":
+        # For batching the tf dataset objects
+        batch_size = 32
+        
+        train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
+        
+        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
     
     return train, train_size, val, val_size
     
-#if __name__ == '__main__':
-#    train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
     
