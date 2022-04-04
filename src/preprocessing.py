@@ -116,7 +116,7 @@ def rescale_and_resize_image(file_path, label, width, height):
 def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
     """Maps the rescale_and_resize_image function to the dataset."""
     
-    
+    # For train/val sets, adds repeat method
     if training_set:
         
         if augment=="Mahbod" or augment=="Hosseinzadeh":
@@ -151,7 +151,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
     else:
         if augment=="Mahbod" or augment=="Hosseinzadeh":
             # Map image preprocessing/augmentation to dataset.
-            ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() # ADDED
+            ds = ds.shuffle(buffer_size=ds_size, seed=42) 
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             ds = (ds
@@ -160,7 +160,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
                     )
         else:
             # Map image preprocessing/augmentation to dataset.
-            ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() # ADDED
+            ds = ds.shuffle(buffer_size=ds_size, seed=42) 
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
             
             ds = (ds
@@ -185,7 +185,7 @@ def run_preprocessing(augment, dataset_name):
         train, train_size, val, val_size = create_train_val_tf_dataset()
         
         train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment)
     
     elif dataset_name == "HAM10000":
         # For batching the tf dataset objects
@@ -194,7 +194,7 @@ def run_preprocessing(augment, dataset_name):
         train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
         
         train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=False, augment=augment)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment)
     
     return train, train_size, val, val_size
     

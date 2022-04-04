@@ -7,7 +7,7 @@ from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman
 if __name__ == '__main__':
     
     run_id = ""
-    num_epochs = 1 
+    num_epochs = 15
     augmentation = "" # Mahbod / Hosseinzadeh
     dataset = "ISIC" # ISIC / HAM10000
     
