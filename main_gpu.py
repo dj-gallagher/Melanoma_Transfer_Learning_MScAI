@@ -6,7 +6,6 @@ from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman
 
 
 if __name__ == '__main__':
-    '''
     
     with  tf.device("/cpu:0"):
         run_id = ""
@@ -33,9 +32,9 @@ if __name__ == '__main__':
             #save_model(model, training_start_timestamp)
             
             # Find test set accuracy and save predictions
-            evaluate_model(model, training_start_timestamp, num_epochs, augmentation)'''
+            evaluate_model(model, training_start_timestamp, num_epochs, augmentation)
     
-    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))  
+    
     
     
     
