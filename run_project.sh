@@ -14,6 +14,7 @@
 
 module load shared
 module load miniconda3/3.9.1
+module load tensorflow2-py37-cuda10.1-gcc/2.2.0 
 
 ### Your code here ###
 free -h
