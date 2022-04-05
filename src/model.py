@@ -4,6 +4,8 @@ import datetime
 import math
 import tensorflow_addons as tfa
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------
@@ -94,8 +96,8 @@ def ResNet50_Mahbod(model_name):
     optimizers_and_layers = block_17_optimizers_and_layers + new_fc_optimizers_and_layers
     
     # Optimizer with different learning rates across layers
-    optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
-    #optimizer = keras.optimizers.Adam(learning_rate=pretrained_lr)
+    #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
+    optimizer = keras.optimizers.Adam(learning_rate=pretrained_lr)
     # ---------------------------
     
     # LOSS FUNCTION AND METRICS
@@ -248,6 +250,31 @@ def create_lr_scheduler_cb():
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
+def save_training_plots(model, num_epochs):
+    # Here we are going to append the training (accuracy + loss) and validation (accuracy + loss) to a 
+    # 2D NumPy array and save to a file gpu_model_data.csv'
+    #training_loss = np.array(model.history["loss"]).reshape((num_epochs, 1))
+    #validation_loss = np.array(model.history["val_loss"]).reshape((num_epochs, 1))
+    #training_accuracy = np.array(model.history["accuracy"]).reshape((num_epochs, 1))
+    #validation_accuracy = np.array(model.history["val_accuracy"]).reshape((num_epochs, 1))
+    #metric_data = training_data = np.hstack((training_accuracy,training_loss,validation_accuracy, validation_loss))
+    #np.savetxt(f'./output/results/{model.name}_training_data.csv', metric_data, delimiter=',')
+
+
+    # The following code will save an image showing the above metrics for the model during the training process. 
+
+    plt.style.use("ggplot")
+    plt.figure()
+    plt.plot(np.arange(0, num_epochs), model.history["loss"], label="train_loss")
+    plt.plot(np.arange(0, num_epochs), model.history["val_loss"], label="val_loss")
+    plt.plot(np.arange(0, num_epochs), model.history["accuracy"], label="train_acc")
+    plt.plot(np.arange(0, num_epochs), model.history["val_accuracy"], label="val_acc")
+    plt.title("Training Loss and Accuracy")
+    plt.xlabel("Epoch #")
+    plt.ylabel("Loss/Accuracy")
+    plt.legend()
+    plt.savefig(f'./output/results/{model.name}_train_results_graph.png')
+
 
 # MODEL TRAINING 
 # ------------------------------------------------------------------------------------------------
@@ -263,10 +290,11 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
     batch_size = 32
     
     # Create list of callback functions
-    checkpoint_cb = create_checkpoint_callback(model.name)
-    cb_tensorboard = create_tensorboard_callback(model.name)
+    #checkpoint_cb = create_checkpoint_callback(model.name)
+    #cb_tensorboard = create_tensorboard_callback(model.name)
     #cb_lr_schedule = create_lr_scheduler_cb()
-    cb_list = [cb_tensorboard, checkpoint_cb]
+    #cb_list = [cb_tensorboard, checkpoint_cb]
+    cb_list = []
         
     model.fit(train, 
               epochs=num_epochs,
@@ -275,6 +303,8 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
               validation_steps=(val_size//batch_size),
               callbacks=cb_list, 
               verbose=1) 
+    
+    save_training_plots(model, num_epochs)
     
     return model
 # ------------------------------------------------------------------------------------------------
