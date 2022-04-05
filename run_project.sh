@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --nodes=1
-#SBATCH -p shareq
+#SBATCH --partition=photonq-GPU
 #SBATCH --ntasks=8
 #SBATCH --mem 48G
 #SBATCH --time=08:00:00
@@ -22,8 +22,8 @@ free -h
 source /cm/shared/apps/miniconda/miniconda3/etc/profile.d/conda.sh
 
 # Activate the specific environment you want to use
-conda activate baseline_env
+conda activate my_python3_env
 
 # The code you wish to run. In this case, 
 # use python3 to run the script called "Tensorflow2.py"
-python3 main.py
+python3 main_gpu.py
