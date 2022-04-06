@@ -235,14 +235,14 @@ def create_tensorboard_callback(model_name):
                                                        histogram_freq=1)
     
     return tensorboard_callback
-'''
+
 def create_lr_scheduler_cb():
     """
     Callback function to drop LR by factor of 10 at
     the 5th and 10th epoch
     """
     def scheduler(epoch, learning_rate):
-        if epoch % 5 == 0:
+        if epoch % 2 == 0:
             return learning_rate * 0.1
         else:
             return learning_rate
@@ -250,7 +250,7 @@ def create_lr_scheduler_cb():
     cb = keras.callbacks.LearningRateScheduler(schedule=scheduler, verbose=1)
     
     return cb
-'''
+
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
@@ -306,8 +306,8 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
     # Create list of callback functions
     checkpoint_cb = create_checkpoint_callback(model.name)
     #cb_tensorboard = create_tensorboard_callback(model.name)
-    #cb_lr_schedule = create_lr_scheduler_cb()
-    cb_list = [checkpoint_cb]
+    lr_schedule_cb = create_lr_scheduler_cb()
+    cb_list = [checkpoint_cb, lr_schedule_cb]
     
         
     history = model.fit(train, 

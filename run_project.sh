@@ -27,4 +27,4 @@ conda activate my_python3_env
 
 # The code you wish to run. In this case, 
 # use python3 to run the script called "Tensorflow2.py"
-python3 main_gpu.py
+python3 main.py
