@@ -5,7 +5,7 @@ import os
 
 from math import ceil
 
-def evaluate_model(model, dataset, timestamp, num_epochs, augmentation):
+def evaluate_model(model, dataset, timestamp, num_epochs, augmentation, img_width, img_height):
     
     if dataset=="ISIC":
         # Load file paths of test images to a tf dataset
@@ -20,7 +20,9 @@ def evaluate_model(model, dataset, timestamp, num_epochs, augmentation):
                                 ds_size=test_size,
                                 batch_size=batch_size,
                                 training_set=False,
-                                augment=augmentation)
+                                augment=augmentation,
+                                img_width=img_width,
+                                img_height=img_height)
         
         # Evaluate model and save results in csv file
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
@@ -29,6 +31,7 @@ def evaluate_model(model, dataset, timestamp, num_epochs, augmentation):
         metrics_dict["run_id"] = model.name
         metrics_dict["Epochs"] = num_epochs
         metrics_dict["Augmentation"] = augmentation
+        metrics_dict["Image_Resolution"] = f"{img_width}x{img_height}"
         
         metrics_df = pd.DataFrame(metrics_dict, index=[0])
         
@@ -47,7 +50,9 @@ def evaluate_model(model, dataset, timestamp, num_epochs, augmentation):
                                 ds_size=test_size,
                                 batch_size=batch_size,
                                 training_set=False,
-                                augment=augmentation)
+                                augment=augmentation,
+                                img_width=img_width,
+                                img_height=img_height)
         
         # Evaluate model and save results in csv file
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
@@ -56,6 +61,7 @@ def evaluate_model(model, dataset, timestamp, num_epochs, augmentation):
         metrics_dict["run_id"] = model.name
         metrics_dict["Epochs"] = num_epochs
         metrics_dict["Augmentation"] = augmentation
+        metrics_dict["Image_Resolution"] = f"{img_width}x{img_height}"
         
         metrics_df = pd.DataFrame(metrics_dict, index=[0])
         

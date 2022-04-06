@@ -15,7 +15,7 @@ matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Mahbod(run_id, label_smooth_factor=0):
+def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -27,7 +27,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0):
     # ---------------------------
     base_model = keras.applications.resnet50.ResNet50(include_top=False,
                                                       weights="imagenet",
-                                                      input_shape=(224,224,3))
+                                                      input_shape=(img_width,img_height,3))
     
     #base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.

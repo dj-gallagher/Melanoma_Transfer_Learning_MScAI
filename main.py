@@ -15,14 +15,16 @@ if __name__ == '__main__':
         augmentation = "" # Mahbod / Hosseinzadeh
         dataset = "ISIC" # ISIC / HAM10000
         label_smooth_factor = 0
+        img_width = 128
+        img_height = 128
         
         # Create training and validation sets from metadata and images folder
-        train, train_size, val, val_size = run_preprocessing(augment=augmentation, dataset_name=dataset)
+        train, train_size, val, val_size = run_preprocessing(augment=augmentation, dataset_name=dataset, img_width=img_width, img_height=img_height)
     
         with tf.device("/gpu:0"):
             # Create a model, pass run id as arguement
             #model = ResNet50_Hosseinzadeh(run_id)
-            model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=label_smooth_factor)
+            model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=label_smooth_factor, img_width=img_width, img_height=img_height)
             #model = ResNet152V2_Rahman(run_id)
             
             # To mark when training began, used for saving the model at the end of training
@@ -35,5 +37,5 @@ if __name__ == '__main__':
             #save_model(model, training_start_timestamp)
             
             # Find test set accuracy and save predictions
-            evaluate_model(model, dataset, training_start_timestamp, num_epochs, augmentation)    
+            evaluate_model(model, dataset, training_start_timestamp, num_epochs, augmentation, img_width, img_height)    
 

@@ -116,7 +116,7 @@ def rescale_and_resize_image(file_path, label, width, height):
     return image, label
 
 
-def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
+def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
     """Maps the rescale_and_resize_image function to the dataset."""
     
     # For train/val sets, adds repeat method
@@ -126,7 +126,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
         
             # Map image preprocessing and augmentation to dataset.
             ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() # ADDED
-            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             
             # Shuffle, repeat etc.
@@ -145,7 +145,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
                     )
             
             # Map image preprocessing/augmentation to dataset.
-            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
             
             ds = (ds
                     .batch(batch_size)
@@ -155,7 +155,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
         if augment=="Mahbod" or augment=="Hosseinzadeh":
             # Map image preprocessing/augmentation to dataset.
             ds = ds.shuffle(buffer_size=ds_size, seed=42) 
-            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             ds = (ds
                     .batch(batch_size)
@@ -164,7 +164,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
         else:
             # Map image preprocessing/augmentation to dataset.
             ds = ds.shuffle(buffer_size=ds_size, seed=42) 
-            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=224, height=224))
+            ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
             
             ds = (ds
                     .batch(batch_size)
@@ -175,7 +175,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment):
 
 
 
-def run_preprocessing(augment, dataset_name):
+def run_preprocessing(augment, dataset_name, img_width, img_height):
     """
     Returns training validation split as TF dataset objects. 
     Features are numpy arrays representing skin lesion images.
@@ -187,8 +187,8 @@ def run_preprocessing(augment, dataset_name):
         
         train, train_size, val, val_size = create_train_val_tf_dataset()
         
-        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment)
+        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
     
     elif dataset_name == "HAM10000":
         # For batching the tf dataset objects
@@ -196,8 +196,8 @@ def run_preprocessing(augment, dataset_name):
         
         train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
         
-        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment)
+        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
     
     return train, train_size, val, val_size
     
