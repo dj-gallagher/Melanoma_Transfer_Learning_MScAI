@@ -48,7 +48,6 @@ def read_test_csv_to_dataset():
     # Read metadata csv and create column with filepaths
     test_df = pd.read_csv("./metadata/test.csv")
     test_df["image_path"] = "./images/test/" + test_df["image_id"] + ".jpg"
-    #test_image_paths = test_df["image_path"]
     test_image_paths = test_df["image_path"]
     
     # Number of test examples

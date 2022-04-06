@@ -128,16 +128,19 @@ def augment_dataset(ds, ds_size, augment):
         aug_4 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
         
         # flip rot 90
-        aug_5 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
-                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        #aug_5 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
+        #        .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        aug_5 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1, horizontal_flip=True) )
         
         # flip rot 180
-        aug_6 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
-                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        #aug_6 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
+        #        .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        aug_6 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2, horizontal_flip=True) )
 
         # flip rot 270
-        aug_7 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
-                .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        #aug_7 = (ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
+        #        .map( lambda image, label: augment_image(image, label, horizontal_flip=True) ) )
+        aug_7 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3, horizontal_flip=True) )
 
         ds = (ds.concatenate(aug_1)
                 .concatenate(aug_2)
