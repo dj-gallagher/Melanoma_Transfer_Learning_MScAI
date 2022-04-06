@@ -282,7 +282,7 @@ def save_training_plots(model, num_epochs):
 def train_model(model, train, train_size, val, val_size, num_epochs):
     
     # Create directories to store training data from callbacks
-    os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
+    #os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
     os.mkdir(f"./output/training_ckpts/{model.name}") # checkpoint cb
     
     # Values for ISIC 2017, will have to make this automatic later
@@ -290,11 +290,11 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
     batch_size = 32
     
     # Create list of callback functions
-    #checkpoint_cb = create_checkpoint_callback(model.name)
+    checkpoint_cb = create_checkpoint_callback(model.name)
     #cb_tensorboard = create_tensorboard_callback(model.name)
     #cb_lr_schedule = create_lr_scheduler_cb()
-    #cb_list = [cb_tensorboard, checkpoint_cb]
-    cb_list = []
+    cb_list = [checkpoint_cb]
+    
         
     model.fit(train, 
               epochs=num_epochs,
