@@ -7,7 +7,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Agg')
+
+
+matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
+
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
@@ -268,13 +271,20 @@ def save_training_plots(history, model_name, num_epochs):
     plt.figure()
     plt.plot(np.arange(0, num_epochs), history.history["loss"], label="train_loss")
     plt.plot(np.arange(0, num_epochs), history.history["val_loss"], label="val_loss")
+    plt.title("Training Loss")
+    plt.xlabel("Epoch #")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.savefig(f'./output/results/{model_name}_train_loss.png')
+    
+    plt.figure()
     plt.plot(np.arange(0, num_epochs), history.history["accuracy"], label="train_acc")
     plt.plot(np.arange(0, num_epochs), history.history["val_accuracy"], label="val_acc")
-    plt.title("Training Loss and Accuracy")
+    plt.title("Training Accuracy")
     plt.xlabel("Epoch #")
-    plt.ylabel("Loss/Accuracy")
+    plt.ylabel("Accuracy")
     plt.legend()
-    plt.savefig(f'./output/results/{model_name}_train_results_graph.png')
+    plt.savefig(f'./output/results/{model_name}_train_accuracy.png')
 
 
 # MODEL TRAINING 
@@ -282,9 +292,12 @@ def save_training_plots(history, model_name, num_epochs):
 # ------------------------------------------------------------------------------------------------
 def train_model(model, train, train_size, val, val_size, num_epochs):
     
-    # Create directories to store training data from callbacks
+    # Create directories to store training checkpoints
     #os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
     os.mkdir(f"./output/training_ckpts/{model.name}") # checkpoint cb
+    
+    # Create directory to store training and testing data
+    os.mkdir(f"./output/results/{model.name}") # Directory for results
     
     # Values for ISIC 2017, will have to make this automatic later
     # Used to calcualte how many steps per epoch and per validation 

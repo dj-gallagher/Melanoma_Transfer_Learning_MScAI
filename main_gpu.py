@@ -32,5 +32,5 @@ if __name__ == '__main__':
             #save_model(model, training_start_timestamp)
             
             # Find test set accuracy and save predictions
-            evaluate_model(model, training_start_timestamp, num_epochs, augmentation)    
+            evaluate_model(model, dataset, training_start_timestamp, num_epochs, augmentation)    
 
