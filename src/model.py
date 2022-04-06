@@ -250,7 +250,7 @@ def create_lr_scheduler_cb():
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def save_training_plots(model, num_epochs):
+def save_training_plots(history, model_name, num_epochs):
     # Here we are going to append the training (accuracy + loss) and validation (accuracy + loss) to a 
     # 2D NumPy array and save to a file gpu_model_data.csv'
     #training_loss = np.array(model.history["loss"]).reshape((num_epochs, 1))
@@ -265,15 +265,15 @@ def save_training_plots(model, num_epochs):
 
     plt.style.use("ggplot")
     plt.figure()
-    plt.plot(np.arange(0, num_epochs), model.history["loss"], label="train_loss")
-    plt.plot(np.arange(0, num_epochs), model.history["val_loss"], label="val_loss")
-    plt.plot(np.arange(0, num_epochs), model.history["accuracy"], label="train_acc")
-    plt.plot(np.arange(0, num_epochs), model.history["val_accuracy"], label="val_acc")
+    plt.plot(np.arange(0, num_epochs), history.history["loss"], label="train_loss")
+    plt.plot(np.arange(0, num_epochs), history.history["val_loss"], label="val_loss")
+    plt.plot(np.arange(0, num_epochs), history.history["accuracy"], label="train_acc")
+    plt.plot(np.arange(0, num_epochs), history.history["val_accuracy"], label="val_acc")
     plt.title("Training Loss and Accuracy")
     plt.xlabel("Epoch #")
     plt.ylabel("Loss/Accuracy")
     plt.legend()
-    plt.savefig(f'./output/results/{model.name}_train_results_graph.png')
+    plt.savefig(f'./output/results/{model_name}_train_results_graph.png')
 
 
 # MODEL TRAINING 
@@ -296,15 +296,15 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
     cb_list = [checkpoint_cb]
     
         
-    model.fit(train, 
-              epochs=num_epochs,
-              steps_per_epoch=(train_size//batch_size), # should be a number s.t. (steps*batch_size)=num_training_egs
-              validation_data=val, 
-              validation_steps=(val_size//batch_size),
-              callbacks=cb_list, 
-              verbose=1) 
+    history = model.fit(train, 
+                epochs=num_epochs,
+                steps_per_epoch=(train_size//batch_size), # should be a number s.t. (steps*batch_size)=num_training_egs
+                validation_data=val, 
+                validation_steps=(val_size//batch_size),
+                callbacks=cb_list, 
+                verbose=1) 
     
-    save_training_plots(model, num_epochs)
+    save_training_plots(history, model.name, num_epochs)
     
     return model
 # ------------------------------------------------------------------------------------------------
