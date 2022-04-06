@@ -7,6 +7,8 @@ from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet152V2_Rahman
 
 if __name__ == '__main__':
     
+    tf.debugging.set_log_device_placement(True)
+    
     with  tf.device("/cpu:0"):
         run_id = ""
         num_epochs = 1 
