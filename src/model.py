@@ -15,7 +15,7 @@ matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Mahbod(model_name):
+def ResNet50_Mahbod(run_id, label_smooth_factor=0):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -42,7 +42,7 @@ def ResNet50_Mahbod(model_name):
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
-                               name=model_name) 
+                               name=run_id) 
     
     
     
@@ -98,7 +98,9 @@ def ResNet50_Mahbod(model_name):
     
     # LOSS FUNCTION AND METRICS
     # -------------------------------------
-    loss_func = keras.losses.CategoricalCrossentropy()
+    # Apply label smoothing factor, default is 0 (no smoothing)
+    loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
+        
     metrics_list = ['accuracy',
                     keras.metrics.AUC( multi_label=True )] 
     
@@ -112,7 +114,7 @@ def ResNet50_Mahbod(model_name):
     return model
 
 
-def ResNet50_Hosseinzadeh(model_name):
+def ResNet50_Hosseinzadeh(run_id, label_smoothing):
     
     # DEFINING MODEL LAYERS
     # ---------------------------
@@ -133,7 +135,7 @@ def ResNet50_Hosseinzadeh(model_name):
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
-                               name=model_name) 
+                               name=run_id) 
 
 
     # OPTIMIZERS
