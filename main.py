@@ -1,7 +1,7 @@
 import tensorflow as tf
 from src.preprocessing import run_preprocessing
 from src.evaluate import evaluate_model
-from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model, save_model
+from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model
 
 
 if __name__ == '__main__':

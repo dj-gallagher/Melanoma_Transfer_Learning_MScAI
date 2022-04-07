@@ -263,7 +263,8 @@ def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
     # -------------------------------------
     model.compile(optimizer=optimizer ,
                 loss=loss_func ,
-                metrics=metrics_list)
+                metrics=metrics_list,
+                run_eagerly=True)
     
     return model
 
