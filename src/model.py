@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 
-matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
+#matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
 
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------

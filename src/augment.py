@@ -152,7 +152,7 @@ def augment_dataset(ds, ds_size, augment):
         
     elif augment=="Hosseinzadeh":
         
-        ds_size = ds_size*4
+        ds_size = ds_size*3
         
         # horizontal flip
         aug_1 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
@@ -170,7 +170,7 @@ def augment_dataset(ds, ds_size, augment):
                 .concatenate(aug_2))
 
 
-            
+    ds = ds.shuffle(buffer_size=ds_size)        
     
     # Return all datesets combined and new dataset size
     return ds, ds_size
