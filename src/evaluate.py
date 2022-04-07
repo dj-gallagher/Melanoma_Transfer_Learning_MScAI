@@ -5,7 +5,7 @@ import os
 
 from math import ceil
 
-def evaluate_model(model, dataset, timestamp, num_epochs, augmentation, img_width, img_height):
+def evaluate_model(model, dataset, num_epochs, augmentation, img_width, img_height):
     
     if dataset=="ISIC":
         # Load file paths of test images to a tf dataset

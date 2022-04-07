@@ -86,10 +86,6 @@ def Mahbod_ResNet50_Dropout(run_id, label_smooth_factor=0):
     return model
 
 
-def Label_Smoothing():
-    """
-    
-    """
     
 if __name__ == '__main__':
     model = Mahbod_ResNet50_Dropout("TEST", label_smooth_factor=0)

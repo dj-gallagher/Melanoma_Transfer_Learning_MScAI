@@ -204,6 +204,69 @@ def ResNet152V2_Rahman(model_name):
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
+def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
+    """
+    Creates a Keras model and from a base pre-trained model and newly defined output layers.
+    Compiles the model with defined optimizer, loss and metrics.
+    
+    Returns: compiled Keras model ready for training
+    """
+        
+    # DEFINING MODEL LAYERS
+    # ---------------------------
+    base_model = keras.applications.resnet50.ResNet50(include_top=False,
+                                                      weights="imagenet",
+                                                      input_shape=(img_width,img_height,3))
+    
+    
+    base_model.trainable = False 
+    '''
+    # Define output layers 
+    x = base_model.output
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(units=64, activation="relu")(x)
+    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
+
+    # Create model using forzen base layers and new FC layers
+    model = keras.models.Model(inputs=base_model.input, 
+                               outputs=predictions, 
+                               name=run_id) 
+    '''
+    inputs = keras.Input(shape=(img_width,img_height,3))
+    x = base_model(inputs, training=False)
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(units=64, activation="relu")(x)
+    outputs = keras.layers.Dense(units=3, activation="softmax")(x)
+    
+    model = keras.Model(inputs=inputs, 
+                               outputs=outputs, 
+                               name=run_id) 
+
+    # OPTIMIZERS
+    # -------------------------------------
+    # Standard Optimizer
+    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
+    #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
+    # ---------------------------
+    
+    
+    # LOSS FUNCTION AND METRICS
+    # -------------------------------------
+    # Apply label smoothing factor, default is 0 (no smoothing)
+    loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
+        
+    metrics_list = ['accuracy',
+                    keras.metrics.AUC( multi_label=True )] 
+    
+    # COMPILE 
+    # -------------------------------------
+    model.compile(optimizer=optimizer ,
+                loss=loss_func ,
+                metrics=metrics_list)
+    
+    return model
+
 
 # CALLBACKS
 # ------------------------------------------------------------------------------------------------
@@ -249,16 +312,6 @@ def create_lr_scheduler_cb():
 # ------------------------------------------------------------------------------------------------
 
 def save_training_plots(history, model_name, num_epochs):
-    # Here we are going to append the training (accuracy + loss) and validation (accuracy + loss) to a 
-    # 2D NumPy array and save to a file gpu_model_data.csv'
-    #training_loss = np.array(model.history["loss"]).reshape((num_epochs, 1))
-    #validation_loss = np.array(model.history["val_loss"]).reshape((num_epochs, 1))
-    #training_accuracy = np.array(model.history["accuracy"]).reshape((num_epochs, 1))
-    #validation_accuracy = np.array(model.history["val_accuracy"]).reshape((num_epochs, 1))
-    #metric_data = training_data = np.hstack((training_accuracy,training_loss,validation_accuracy, validation_loss))
-    #np.savetxt(f'./output/results/{model.name}_training_data.csv', metric_data, delimiter=',')
-
-
     # The following code will save an image showing the above metrics for the model during the training process. 
 
     plt.style.use("ggplot")
@@ -269,7 +322,7 @@ def save_training_plots(history, model_name, num_epochs):
     plt.xlabel("Epoch #")
     plt.ylabel("Loss")
     plt.legend()
-    plt.savefig(f'./output/results/{model_name}_train_loss.png')
+    plt.savefig(f'./output/results/{model_name}/train_loss.png')
     
     plt.figure()
     plt.plot(np.arange(0, num_epochs), history.history["accuracy"], label="train_acc")
@@ -278,7 +331,7 @@ def save_training_plots(history, model_name, num_epochs):
     plt.xlabel("Epoch #")
     plt.ylabel("Accuracy")
     plt.legend()
-    plt.savefig(f'./output/results/{model_name}_train_accuracy.png')
+    plt.savefig(f'./output/results/{model_name}/train_accuracy.png')
 
 
 # MODEL TRAINING 
@@ -322,13 +375,14 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
 # MODEL SAVING  
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def save_model(trained_model, timestamp):
-    
-    #trained_model.save( "./output/models/" + f"{trained_model.name}_{timestamp}")
-    trained_model.save( "./output/models/" + f"{trained_model.name}_{timestamp}", include_optimizer=False)
+
+
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
+if __name__ == '__main__':
+    model = ResNet50("TEST", 0, 128, 128)
+    print(model.summary())
 
     
     
