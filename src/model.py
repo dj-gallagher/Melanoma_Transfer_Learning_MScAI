@@ -32,7 +32,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     #base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     
-    
+    '''
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
@@ -43,8 +43,18 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
                                name=run_id) 
+    '''
+    inputs = keras.Input(shape=(img_width,img_height,3))
+    x = keras.applications.resnet50.preprocess_input(x)
+    x = base_model(inputs, training=False)
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(units=64, activation="relu")(x)
+    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
     
-    
+    # Create model using forzen base layers and new FC layers
+    model = keras.models.Model(inputs=base_model.input, 
+                               outputs=predictions, 
+                               name=run_id) 
     
     # UNFREEZE 17TH BLOCK
     # -------------------------------------
@@ -89,8 +99,8 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
             #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
     
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
-    #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
+    #optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
     # ---------------------------

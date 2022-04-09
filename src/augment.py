@@ -170,7 +170,7 @@ def augment_dataset(ds, ds_size, augment):
                 .concatenate(aug_2))
 
 
-    ds = ds.shuffle(buffer_size=ds_size)        
+    #ds = ds.shuffle(buffer_size=ds_size)        
     
     # Return all datesets combined and new dataset size
     return ds, ds_size

@@ -107,8 +107,8 @@ def rescale_and_resize_image(file_path, label, width, height):
     image = tf.image.resize(image, [width, height])
     
     # ImageNet mean RGB intensity subtraction
-    imagenet_rgb_mean = tf.reshape( tf.constant([0.485, 0.456, 0.406], dtype=tf.float32), [1,1,3]) 
-    image = image - imagenet_rgb_mean
+    #imagenet_rgb_mean = tf.reshape( tf.constant([0.485, 0.456, 0.406], dtype=tf.float32), [1,1,3]) 
+    #image = image - imagenet_rgb_mean
     
     # Standardize image
     #image = tf.image.per_image_standardization(image)
@@ -125,7 +125,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
         if augment=="Mahbod" or augment=="Hosseinzadeh":
         
             # Map image preprocessing and augmentation to dataset.
-            #ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() # ADDED
+            ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() 
             ds = ds.repeat() # ADDED
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
             ds, ds_size = augment_dataset(ds, ds_size, augment)
@@ -134,7 +134,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             ds = (ds
                     #.repeat() # REMOVED
                     .batch(batch_size)
-                    .prefetch(100)
+                    .prefetch(200)
                     )
         
         else:
@@ -150,7 +150,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(100)
+                    .prefetch(200)
                     )
     else:
         if augment=="Mahbod" or augment=="Hosseinzadeh":
@@ -160,7 +160,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(100)
+                    .prefetch(200)
                     )
         else:
             # Map image preprocessing/augmentation to dataset.
@@ -169,7 +169,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(100)
+                    .prefetch(200)
                     )
     
     return ds, ds_size
