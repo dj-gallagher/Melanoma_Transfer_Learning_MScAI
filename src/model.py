@@ -45,7 +45,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
                                name=run_id) 
     '''
     inputs = keras.Input(shape=(img_width,img_height,3))
-    x = keras.applications.resnet50.preprocess_input(x)
+    x = keras.applications.resnet50.preprocess_input(inputs)
     x = base_model(inputs, training=False)
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(units=64, activation="relu")(x)
