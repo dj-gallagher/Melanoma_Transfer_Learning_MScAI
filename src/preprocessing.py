@@ -125,16 +125,23 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
         if augment=="Mahbod" or augment=="Hosseinzadeh":
         
             # Map image preprocessing and augmentation to dataset.
-            ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() 
-            ds = ds.repeat() # ADDED
+            #ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() 
+            
+            # Load image data from filepaths
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+            
+            # Augment dataset to increase size
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             
-            # Shuffle, repeat etc.
+            # Cache the augmented dataset for reuse
+            ds = ds.cache()
+            
+            # Repeat then shuffle, batch and prefetch
             ds = (ds
-                    #.repeat() # REMOVED
+                    .shuffle(buffer_size=ds_size//2, reshuffle_each_iteration=True)
                     .batch(batch_size)
-                    .prefetch(200)
+                    .repeat() 
+                    .prefetch(100)
                     )
         
         else:
@@ -150,7 +157,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(200)
+                    .prefetch(100)
                     )
     else:
         if augment=="Mahbod" or augment=="Hosseinzadeh":
@@ -160,7 +167,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(200)
+                    .prefetch(100)
                     )
         else:
             # Map image preprocessing/augmentation to dataset.
@@ -169,7 +176,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             ds = (ds
                     .batch(batch_size)
-                    .prefetch(200)
+                    .prefetch(100)
                     )
     
     return ds, ds_size

@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 
-#matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
+matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
 
 # BASELINE MODEL FUNCTIONS
 # ------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     predictions = keras.layers.Dense(units=3, activation="softmax")(x)
     
     # Create model using forzen base layers and new FC layers
-    model = keras.models.Model(inputs=base_model.input, 
+    model = keras.models.Model(inputs=inputs, 
                                outputs=predictions, 
                                name=run_id) 
     
@@ -99,8 +99,8 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
             #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
     
     # Standard Optimizer
-    #optimizer = keras.optimizers.Adam(learning_rate=0.0001)
-    optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
+    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
     # ---------------------------
@@ -243,7 +243,7 @@ def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
                                name=run_id) 
     '''
     inputs = keras.Input(shape=(img_width,img_height,3))
-    x = keras.applications.resnet50.preprocess_input(x)
+    x = keras.applications.resnet50.preprocess_input(inputs)
     x = base_model(inputs, training=False)
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(units=64, activation="relu")(x)

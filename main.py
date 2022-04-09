@@ -13,7 +13,7 @@ if __name__ == '__main__':
     
     with  tf.device("/cpu:0"):
         run_id = "TEST"
-        num_epochs = 15
+        num_epochs = 10
         augmentation = "Mahbod" # Mahbod / Hosseinzadeh
         dataset = "ISIC" # ISIC / HAM10000
         label_smooth_factor = 0
