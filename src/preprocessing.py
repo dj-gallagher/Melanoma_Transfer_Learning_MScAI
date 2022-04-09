@@ -138,8 +138,9 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             # Repeat then shuffle, batch and prefetch
             ds = (ds
+                    .shuffle(100, reshuffle_each_iteration=True)
                     .repeat() 
-                    .shuffle(buffer_size=ds_size//2, reshuffle_each_iteration=True)
+                    #.shuffle(100, reshuffle_each_iteration=True)
                     .batch(batch_size)
                     .prefetch(100)
                     )
