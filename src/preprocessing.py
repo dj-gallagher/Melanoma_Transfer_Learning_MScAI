@@ -116,10 +116,11 @@ def rescale_and_resize_image(file_path, label, width, height):
     return image, label
 
 def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
-    
+    '''
     # Train and Val set
     if training_set:
         ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
+                .augment_dataset(ds, ds_size, augment)
                 .cache()
                 .shuffle(ds_size, reshuffle_each_iteration=True)
                 .repeat()
@@ -131,7 +132,26 @@ def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_hei
         ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
               .batch(batch_size)
               .prefetch(tf.data.experimental.AUTOTUNE))
-        
+    '''
+    if training_set:
+        # Load image data from filepaths
+        ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+        # Apply augmentation
+        ds, ds_size = augment_dataset(ds, ds_size, augment)
+        # Cache augmented data
+        ds.cache()
+        # Shuffle and repeat the augmented dataset for use in multiple epochss
+        ds = ds.shuffle(buffer_size=ds_size, seed=42, reshuffle_each_iteration=True).repeat()
+        # batch and prefetch
+        ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    else:
+        # Load image data from filepaths
+        ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+        # Apply augmentation
+        ds, ds_size = augment_dataset(ds, ds_size, augment)
+        # batch and prefetch (no repeat needed for test set)
+        ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    
     return ds, ds_size
 
 

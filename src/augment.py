@@ -116,25 +116,25 @@ def augment_dataset(ds, ds_size, augment):
         ds_size = ds_size*8
         
         # rotation by 90
-        aug_1 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1) )
+        aug_1 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1), tf.data.experimental.AUTOTUNE )
         
         # rotation by 180
-        aug_2 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2) )
+        aug_2 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2), tf.data.experimental.AUTOTUNE )
         
         # rotation by 270
-        aug_3 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3) )
+        aug_3 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3), tf.data.experimental.AUTOTUNE )
         
         # flip horizontal
-        aug_4 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
+        aug_4 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
         
         # flip rot 90
-        aug_5 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1, horizontal_flip=True) )
+        aug_5 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=1, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
         
         # flip rot 180
-        aug_6 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2, horizontal_flip=True) )
+        aug_6 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=2, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
 
         # flip rot 270
-        aug_7 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3, horizontal_flip=True) )
+        aug_7 = ds.map( lambda image, label: augment_image(image, label, rotate=True, num_rotations=3, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
 
         ds = (ds.concatenate(aug_1)
                 .concatenate(aug_2)
@@ -149,10 +149,10 @@ def augment_dataset(ds, ds_size, augment):
         ds_size = ds_size*3
         
         # horizontal flip
-        aug_1 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True) )
+        aug_1 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
         
         # vertical flip
-        aug_2 = ds.map( lambda image, label: augment_image(image, label, vertical_flip=True) )
+        aug_2 = ds.map( lambda image, label: augment_image(image, label, vertical_flip=True), tf.data.experimental.AUTOTUNE )
         
         # random brightness
         #aug_3 = ds.map( lambda image, label: augment_image(image, label, brightness=True) )
