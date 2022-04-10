@@ -122,9 +122,9 @@ def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_hei
         ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
                 .cache()
                 .shuffle(ds_size)
-                .repeat()
                 .batch(batch_size)
-                .prefetch(tf.data.experimental.AUTOTUNE))
+                .prefetch(tf.data.experimental.AUTOTUNE)
+                .repeat())
     
     # Test set
     else:
