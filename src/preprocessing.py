@@ -120,16 +120,16 @@ def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_hei
     # Train and Val set
     if training_set:
         ds = (ds.shuffle(ds_size)
-                .map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+                .map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
                 .cache()
                 .batch(batch_size)
-                .prefetch(tf.data.AUTOTUNE))
+                .prefetch(tf.data.experimental.AUTOTUNE))
     
     # Test set
     else:
-        ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+        ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
               .batch(batch_size)
-              .prefetch(tf.data.AUTOTUNE))
+              .prefetch(tf.data.experimental.AUTOTUNE))
         
     return ds, ds_size
 
