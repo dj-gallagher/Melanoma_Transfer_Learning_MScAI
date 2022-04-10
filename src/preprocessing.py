@@ -85,7 +85,7 @@ def read_HAM10000_csv_to_dataset():
     
     return train_ds, train_size, test_ds, test_size
     
-
+@tf.function
 def rescale_and_resize_image(file_path, label, width, height): 
     """
     Opens, resizes and rescales the image associated with the file_path supplied.
@@ -115,6 +115,25 @@ def rescale_and_resize_image(file_path, label, width, height):
 
     return image, label
 
+def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
+    
+    # Train and Val set
+    if training_set:
+        ds = (ds.shuffle(ds_size)
+                .map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+                .cache()
+                .batch(batch_size)
+                .prefetch(tf.data.AUTOTUNE))
+    
+    # Test set
+    else:
+        ds = (ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
+              .batch(batch_size)
+              .prefetch(tf.data.AUTOTUNE))
+        
+    return ds, ds_size
+
+
 
 def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
     """Maps the rescale_and_resize_image function to the dataset."""
@@ -125,7 +144,7 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
         if augment=="Mahbod" or augment=="Hosseinzadeh":
         
             # Map image preprocessing and augmentation to dataset.
-            #ds = ds.shuffle(buffer_size=ds_size, seed=42).repeat() 
+            #ds = ds.shuffle(buffer_size=ds_size, seed=42, reshuffle_each_iteration=True).repeat() 
             
             # Load image data from filepaths
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
@@ -134,11 +153,11 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             ds, ds_size = augment_dataset(ds, ds_size, augment)
             
             # Cache the augmented dataset for reuse
-            ds = ds.cache()
+            #ds = ds.cache()
             
             # Repeat then shuffle, batch and prefetch
             ds = (ds
-                    .shuffle(100, reshuffle_each_iteration=True)
+                    .shuffle(buffer_size=ds_size, reshuffle_each_iteration=True, seed=42)
                     .repeat() 
                     #.shuffle(100, reshuffle_each_iteration=True)
                     .batch(batch_size)
@@ -196,9 +215,12 @@ def run_preprocessing(augment, dataset_name, img_width, img_height):
         
         train, train_size, val, val_size = create_train_val_tf_dataset()
         
-        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-    
+        #train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        #val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        train, train_size = rescale_2(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        val, val_size = rescale_2(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        
+        
     elif dataset_name == "HAM10000":
         # For batching the tf dataset objects
         batch_size = 32

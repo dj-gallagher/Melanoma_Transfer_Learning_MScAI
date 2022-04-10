@@ -25,7 +25,7 @@ test = rescale_and_resize(ds=test_ds,
                             training_set=True)
 
 test = test.unbatch()'''
-
+@tf.function
 def augment_image(image, label, 
                   brightness=False,
                   contrast=False,
