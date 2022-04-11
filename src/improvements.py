@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras 
+#import cv2 
 
 def Mahbod_ResNet50_Dropout(run_id, label_smooth_factor=0):
     """
@@ -86,8 +87,13 @@ def Mahbod_ResNet50_Dropout(run_id, label_smooth_factor=0):
     return model
 
 
+def grayworld(img, label):
+    #cv2.xphoto.GrayworldWB()
+    
+    pass
+
     
 if __name__ == '__main__':
-    model = Mahbod_ResNet50_Dropout("TEST", label_smooth_factor=0)
-    
+    #model = Mahbod_ResNet50_Dropout("TEST", label_smooth_factor=0)
+    pass
             
