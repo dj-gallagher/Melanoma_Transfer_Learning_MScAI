@@ -32,12 +32,15 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     #base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     
-    '''
+    
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(units=64, activation="relu")(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
+    x = keras.layers.Dense(units=64, 
+                           activation="relu", 
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+    predictions = keras.layers.Dense(units=3, activation="softmax",
+                                     kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
@@ -47,14 +50,17 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     inputs = keras.Input(shape=(img_width,img_height,3))
     x = base_model(inputs, training=False)
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(units=64, activation="relu")(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
-    
+    x = keras.layers.Dense(units=64, 
+                           activation="relu", 
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+    predictions = keras.layers.Dense(units=3, activation="softmax",
+                                     kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=inputs, 
                                outputs=predictions, 
                                name=run_id) 
-    
+    '''
     # UNFREEZE 17TH BLOCK
     # -------------------------------------
     # Create dictionary of layer name and whether the layer is trainable 
@@ -310,7 +316,7 @@ def create_lr_scheduler_cb():
     the 5th and 10th epoch
     """
     def scheduler(epoch, learning_rate):
-        if epoch % 5 == 0:
+        if epoch == 5 or epoch == 10:
             return learning_rate * 0.1
         else:
             return learning_rate
@@ -391,9 +397,12 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-if __name__ == '__main__':
-    model = ResNet50("TEST", 0, 128, 128)
-    print(model.summary())
+'''if __name__ == '__main__':
+    model = ResNet50_Mahbod("Test")
+    for layer in model.layers:
+        if layer.trainable:
+            print(layer.name'''
+    
 
     
     

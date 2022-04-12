@@ -23,6 +23,7 @@ def evaluate_model(model, dataset, num_epochs, augmentation, img_width, img_heig
                                 augment=augmentation,
                                 img_width=img_width,
                                 img_height=img_height)'''
+                                
         test, test_size = rescale_2(test_ds, 
                                     test_size, 
                                     batch_size, 

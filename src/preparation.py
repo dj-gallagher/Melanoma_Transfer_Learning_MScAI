@@ -78,7 +78,3 @@ def create_HAM10000_metadata_splits():
     
     train_df.to_csv("../metadata/train.csv", index=False)
     test_df.to_csv("../metadata/test.csv", index=False)
-
-#if __name__ == '__main__':
-    #create_isic_2017_metadata()
-    #create_HAM10000_metadata_splits()

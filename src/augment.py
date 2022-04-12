@@ -8,7 +8,6 @@ source: https://stackoverflow.com/questions/51136559/mixing-augmented-and-origin
 """
 
 import matplotlib.pyplot as plt
-from numpy import True_
 import tensorflow as tf
 from math import ceil
 
@@ -25,7 +24,7 @@ test = rescale_and_resize(ds=test_ds,
                             training_set=True)
 
 test = test.unbatch()'''
-@tf.function
+
 def augment_image(image, label, 
                   brightness=False,
                   contrast=False,
