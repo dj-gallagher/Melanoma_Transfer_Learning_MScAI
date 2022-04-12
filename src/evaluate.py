@@ -5,14 +5,14 @@ import os
 
 from math import ceil
 
-def evaluate_model(model, dataset, num_epochs, augmentation, img_width, img_height):
+def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_width, img_height):
     
     if dataset=="ISIC":
         # Load file paths of test images to a tf dataset
         test_ds, test_size, y_true = read_test_csv_to_dataset()
         
         # Batch size the same as training set
-        batch_size = 32
+        
         test_steps = ceil(test_size / batch_size)
         
         # Convert filepaths to images and resize

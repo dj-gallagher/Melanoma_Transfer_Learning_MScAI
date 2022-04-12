@@ -12,30 +12,30 @@ if __name__ == '__main__':
     #tf.debugging.set_log_device_placement(True)
     
     with  tf.device("/gpu:0"):
-        run_id = "All_GPU_TEST"
-        num_epochs = 5
-        batch_size = 32
-        augmentation = "Mahbod" # Mahbod / Hosseinzadeh
-        dataset = "ISIC" # ISIC / HAM10000
-        label_smooth_factor = 0
-        img_width = 128
-        img_height = 128
+        run_id = ""
+        EPOCHS = 15
+        BATCH_SIZE = 64
+        AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
+        DATASET = "ISIC" # ISIC / HAM10000
+        LABEL_SMOOTHING = 0
+        IMG_WIDTH = 128
+        IMG_HEIGHT = 128
         
         # Create training and validation sets from metadata and images folder
-        train, train_size, val, val_size = run_preprocessing(batch_size=batch_size, augment=augmentation, dataset_name=dataset, img_width=img_width, img_height=img_height)
+        train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE, augment=AUGMENTATION, dataset_name=DATASET, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
     
         #with tf.device("/gpu:0"):
         # Create a model, pass run id as arguement
         #model = ResNet50_Hosseinzadeh(run_id)
-        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=label_smooth_factor, img_width=img_width, img_height=img_height)
+        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
         #model = ResNet152V2_Rahman(run_id)
         #model = ResNet50(run_id=run_id, label_smooth_factor=label_smooth_factor, img_width=img_width, img_height=img_height)
         
         # Train the model, logging training data with TensorBoard callback
-        trained_model = train_model(model, train, train_size, val, val_size, num_epochs)
+        trained_model = train_model(model, train, train_size, val, val_size, EPOCHS)
         
         # Find test set accuracy and save predictions
-        evaluate_model(trained_model, dataset, num_epochs, augmentation, img_width, img_height)    
+        evaluate_model(trained_model, BATCH_SIZE, DATASET, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)    
 '''
 if __name__ == '__main__':
     #train_ds, train_size, val_ds, val_size = create_train_val_tf_dataset()

@@ -125,7 +125,7 @@ def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_hei
         # Cache augmented data
         ds = ds.cache()
         # Shuffle and repeat the augmented dataset for use in multiple epochss
-        ds = ds.shuffle(buffer_size=1024, seed=42, reshuffle_each_iteration=True).repeat()
+        ds = ds.shuffle(buffer_size=ds_size, seed=42, reshuffle_each_iteration=True).repeat()
         # batch and prefetch
         ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
     else:

@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-
+#from keras_lr_multiplier import LRMultiplier
 
 matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
 
@@ -103,8 +103,14 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
             # Optimizer with different learning rates across layers
             #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
     
+    # LR MULTIPLIER
+                #multipliers = {}
+                #print(block_17_names)
+                #optimizer = LRMultiplier('adam', multipliers)
+    
+    
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=0.00001)
+    optimizer = keras.optimizers.Adam(learning_rate=0.0005)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
@@ -397,11 +403,11 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
     model = ResNet50_Mahbod("Test")
-    for layer in model.layers:
-        if layer.trainable:
-            print(layer.name'''
+    #for layer in model.layers:
+    #    if layer.trainable:
+    #        print(layer.name
     
 
     
