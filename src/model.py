@@ -45,7 +45,6 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
                                name=run_id) 
     '''
     inputs = keras.Input(shape=(img_width,img_height,3))
-    x = keras.applications.resnet50.preprocess_input(inputs)
     x = base_model(inputs, training=False)
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(units=64, activation="relu")(x)
@@ -79,8 +78,8 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     # OPTIMIZERS
     # -------------------------------------
     # Different LR for pretrained and FC layers
-    pretrained_lr = 0.0001 
-    new_lr = 10 * pretrained_lr 
+    #pretrained_lr = 0.0001 
+    #new_lr = 10 * pretrained_lr 
     
             # Create multioptimizer -----
             #optimizers = [keras.optimizers.Adam(learning_rate=pretrained_lr),
@@ -99,7 +98,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
             #optimizer = tfa.optimizers.MultiOptimizer(optimizers_and_layers)
     
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = keras.optimizers.Adam(learning_rate=0.00001)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
