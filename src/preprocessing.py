@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-
+import cv2
 from src.augment import augment_dataset
 
 def create_train_val_tf_dataset():
@@ -84,8 +84,32 @@ def read_HAM10000_csv_to_dataset():
     test_ds = tf.data.Dataset.from_tensor_slices( (test_image_paths.values, test_labels.values) )
     
     return train_ds, train_size, test_ds, test_size
-    
-@tf.function
+# ====================================================================================================
+def map_decorator(func):
+    def wrapper(steps, times, values):
+        # Use a tf.py_function to prevent auto-graph from compiling the method
+        return tf.py_function(
+            func,
+            inp=(steps, times, values),
+            Tout=(steps.dtype, times.dtype, values.dtype)
+        )
+    return wrapper
+
+#@tf.py_function(inp=[img], Tout=tf.float32)  
+def white_balance(img, label): # source: https://stackoverflow.com/questions/46390779/automatic-white-balancing-with-grayworld-assumption
+        # input image is RGB and tensor, convert to LAB for balancing
+        result = cv2.cvtColor(img.numpy(), cv2.COLOR_RGB2LAB)
+        avg_a = np.average(result[:, :, 1])
+        avg_b = np.average(result[:, :, 2])
+        result[:, :, 1] = result[:, :, 1] - ((avg_a - 128) * (result[:, :, 0] / 255.0) * 1.1)
+        result[:, :, 2] = result[:, :, 2] - ((avg_b - 128) * (result[:, :, 0] / 255.0) * 1.1)
+        # convert balanced image back to RGB
+        result = cv2.cvtColor(result, cv2.COLOR_LAB2RGB)
+        result = tf.convert_to_tensor(result, dtype=tf.float32)
+        return result, label
+# ====================================================================================================
+
+  
 def rescale_and_resize_image(file_path, label, width, height): 
     """
     Opens, resizes and rescales the image associated with the file_path supplied.
@@ -105,6 +129,8 @@ def rescale_and_resize_image(file_path, label, width, height):
     image = tf.image.convert_image_dtype(image, tf.float32)
     # Resize shape to model input dimensions
     image = tf.image.resize(image, [width, height])
+    
+    #image = white_balance(image)
     
     # ImageNet mean RGB intensity subtraction
     imagenet_rgb_mean = tf.reshape( tf.constant([0.485, 0.456, 0.406], dtype=tf.float32), [1,1,3]) 
@@ -179,7 +205,6 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             
             # Map image preprocessing/augmentation to dataset.
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
-            
             ds = (ds
                     .batch(batch_size)
                     .prefetch(100)
@@ -198,7 +223,6 @@ def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width
             # Map image preprocessing/augmentation to dataset.
             ds = ds.shuffle(buffer_size=ds_size, seed=42) 
             ds = ds.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height))
-            
             ds = (ds
                     .batch(batch_size)
                     .prefetch(100)

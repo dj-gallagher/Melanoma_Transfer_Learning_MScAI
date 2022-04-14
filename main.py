@@ -3,9 +3,10 @@ from src.preprocessing import run_preprocessing
 from src.evaluate import evaluate_model
 from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model
 
-#from src.preprocessing import *
+from src.preprocessing import *
+import cv2
 #from pprint import pprint
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     
@@ -20,6 +21,7 @@ if __name__ == '__main__':
         LABEL_SMOOTHING = 0
         IMG_WIDTH = 128
         IMG_HEIGHT = 128
+        LR = 0.0001
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE, augment=AUGMENTATION, dataset_name=DATASET, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
@@ -27,7 +29,7 @@ if __name__ == '__main__':
         #with tf.device("/gpu:0"):
         # Create a model, pass run id as arguement
         #model = ResNet50_Hosseinzadeh(run_id)
-        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
+        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         #model = ResNet152V2_Rahman(run_id)
         #model = ResNet50(run_id=run_id, label_smooth_factor=label_smooth_factor, img_width=img_width, img_height=img_height)
         
@@ -35,19 +37,13 @@ if __name__ == '__main__':
         trained_model = train_model(model, train, train_size, val, val_size, EPOCHS)
         
         # Find test set accuracy and save predictions
-        evaluate_model(trained_model, BATCH_SIZE, DATASET, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)    
-'''
-if __name__ == '__main__':
+        evaluate_model(trained_model, BATCH_SIZE, DATASET, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)  
+
+
+'''if __name__ == '__main__':
     #train_ds, train_size, val_ds, val_size = create_train_val_tf_dataset()
     
     test_ds, test_size, test_labels = read_test_csv_to_dataset()
-    
-    paths = []
-    labels = []
-    
-    for path, label in test_ds:
-        paths.append(path.numpy())
-        labels.append(label.numpy())
     
     test_ds, test_size = rescale_and_resize(ds=test_ds,
                                             ds_size=test_size,
@@ -57,12 +53,19 @@ if __name__ == '__main__':
                                             img_width=128,
                                             img_height=128)
     
+    #final = np.hstack((img, white_balance_loops(img)))
+    #show(final)
+    #cv.imwrite('result.jpg', final)
+    
     counter = 0
     for image, label in test_ds.unbatch():
-        plt.imshow(image)
+        counter+=1
+        
+        plt.imshow(image.numpy())
         plt.show()
-        if counter==0:
-            break
-'''
+        
+        if counter==1:
+            break'''
+
     
     

@@ -15,7 +15,7 @@ matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224):
+def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224, lr=0.0001):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -110,7 +110,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     
     
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=0.0005)
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     

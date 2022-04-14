@@ -10,6 +10,7 @@ source: https://stackoverflow.com/questions/51136559/mixing-augmented-and-origin
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from math import ceil
+import cv2
 
 '''test_ds, test_size, test_labels = read_test_csv_to_dataset()
 
@@ -32,7 +33,8 @@ def augment_image(image, label,
                   horizontal_flip=False,
                   vertical_flip=False,
                   rotate=False,
-                  num_rotations=1):
+                  num_rotations=1,
+                  grayworld=True):
     """
     Image augmentation mapper function.
 
@@ -81,6 +83,9 @@ def augment_image(image, label,
     # =======================================================================================================================
     if rotate:
         image = tf.image.rot90(image, k=num_rotations)
+        
+    #if grayworld:
+        #image = cv2.xphoto_GrayworldWB.getSaturationThreshold()
     '''
     # Hue Augmentation
     # =======================================================================================================================
