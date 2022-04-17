@@ -37,7 +37,7 @@ if __name__ == '__main__':
         trained_model = train_model(model, train, train_size, val, val_size, EPOCHS)
         
         # Find test set accuracy and save predictions
-        evaluate_model(trained_model, BATCH_SIZE, DATASET, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)  
+        evaluate_model(trained_model, DATASET, BATCH_SIZE, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)  
 
 
 '''if __name__ == '__main__':
