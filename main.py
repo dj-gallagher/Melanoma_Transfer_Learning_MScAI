@@ -2,10 +2,9 @@ import tensorflow as tf
 from src.preprocessing import run_preprocessing
 from src.evaluate import evaluate_model
 from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model
-
 from src.preprocessing import *
-import cv2
-#from pprint import pprint
+from src.improvements import Mahbod_ResNet50_Dropout
+
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
@@ -22,6 +21,7 @@ if __name__ == '__main__':
         IMG_WIDTH = 128
         IMG_HEIGHT = 128
         LR = 0.0001
+        DROPOUT_RATE = 0
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE, augment=AUGMENTATION, dataset_name=DATASET, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
@@ -29,9 +29,9 @@ if __name__ == '__main__':
         #with tf.device("/gpu:0"):
         # Create a model, pass run id as arguement
         #model = ResNet50_Hosseinzadeh(run_id)
-        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
-        #model = ResNet152V2_Rahman(run_id)
-        #model = ResNet50(run_id=run_id, label_smooth_factor=label_smooth_factor, img_width=img_width, img_height=img_height)
+        #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
+        model = Mahbod_ResNet50_Dropout(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR, dropout_rate=DROPOUT_RATE)
+        
         
         # Train the model, logging training data with TensorBoard callback
         trained_model = train_model(model, train, train_size, val, val_size, EPOCHS)

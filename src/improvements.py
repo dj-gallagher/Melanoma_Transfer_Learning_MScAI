@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow import keras 
-#import cv2 
 
 def Mahbod_ResNet50_Dropout(run_id, 
                             label_smooth_factor=0, 
@@ -12,13 +11,13 @@ def Mahbod_ResNet50_Dropout(run_id,
     Creates a ResNet50 architecture based off the Mahbod et al 
     methodology with added dropout on the new FC layers.
     """ 
+    
     # DEFINING MODEL LAYERS
     # ---------------------------
     base_model = keras.applications.resnet50.ResNet50(include_top=False,
                                                       weights="imagenet",
                                                       input_shape=(img_width,img_height,3))
     
-    #base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     base_model.trainable = False # Blocks 1-17 Frozen as in Mahbod et al.
     
     
@@ -59,7 +58,7 @@ def Mahbod_ResNet50_Dropout(run_id,
         layer = model.get_layer(name=layer_name)
         layer.trainable = trainable_bool
         
-    # ADD WEIGHT DECAY
+    '''# ADD WEIGHT DECAY
     # -------------------------------------
     # source: https://jricheimer.github.io/keras/2019/02/06/keras-hack-1/
     alpha = 0.00002  # weight decay coefficient
@@ -67,13 +66,13 @@ def Mahbod_ResNet50_Dropout(run_id,
         if isinstance(layer, keras.layers.Conv2D) or isinstance(layer, keras.layers.Dense):
             layer.add_loss(keras.regularizers.l2(alpha)(layer.kernel))
         if hasattr(layer, 'bias_regularizer') and layer.use_bias:
-            layer.add_loss(keras.regularizers.l2(alpha)(layer.bias))
+            layer.add_loss(keras.regularizers.l2(alpha)(layer.bias))'''
     
     
     # OPTIMIZERS
     # -------------------------------------
     
-    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
@@ -194,7 +193,8 @@ def grayworld(img, label):
     pass
 
     
-if __name__ == '__main__':
-    model = Mahbod_Resnet50_CosineLRDecay(run_id="TEST")
+#if __name__ == '__main__':
+    #model = Mahbod_ResNet50_Dropout(run_id="TEST")
+    #print(model.summary())
     
             
