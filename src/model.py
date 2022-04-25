@@ -11,11 +11,15 @@ import matplotlib
 
 matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
 
-# BASELINE MODEL FUNCTIONS
+# MAHBOD
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224, lr=0.0001):
+def ResNet50_Mahbod(run_id,
+                    label_smooth_factor=0,
+                    img_width=224,
+                    img_height=224,
+                    lr=0.0001):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -46,21 +50,7 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
                                name=run_id) 
-    '''
-    inputs = keras.Input(shape=(img_width,img_height,3))
-    x = base_model(inputs, training=False)
-    x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(units=64, 
-                           activation="relu", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax",
-                                     kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
-
-    # Create model using forzen base layers and new FC layers
-    model = keras.models.Model(inputs=inputs, 
-                               outputs=predictions, 
-                               name=run_id) 
-    '''
+    
     # UNFREEZE 17TH BLOCK
     # -------------------------------------
     # Create dictionary of layer name and whether the layer is trainable 
@@ -135,6 +125,13 @@ def ResNet50_Mahbod(run_id, label_smooth_factor=0, img_width=224, img_height=224
     return model
 
 
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+
+# HOSSEINZADEH
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+
 def ResNet50_Hosseinzadeh(run_id, label_smoothing):
     
     # DEFINING MODEL LAYERS
@@ -183,6 +180,9 @@ def ResNet50_Hosseinzadeh(run_id, label_smoothing):
 
     return model
     
+    
+    
+    
 
 def ResNet152V2_Rahman(model_name):
     
@@ -224,6 +224,9 @@ def ResNet152V2_Rahman(model_name):
     return model
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
+
+
+
 
 def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
     """

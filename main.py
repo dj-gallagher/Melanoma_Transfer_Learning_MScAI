@@ -13,12 +13,12 @@ if __name__ == '__main__':
     #tf.debugging.set_log_device_placement(True)
     
     with  tf.device("/gpu:0"):
-        run_id = ""
+        run_id = "Mahbod_LS_1"
         EPOCHS = 15
         BATCH_SIZE = 64
         AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
         DATASET = "ISIC" # ISIC / HAM10000
-        LABEL_SMOOTHING = 0
+        LABEL_SMOOTHING = 0.1
         IMG_WIDTH = 128
         IMG_HEIGHT = 128
         LR = 0.0001
