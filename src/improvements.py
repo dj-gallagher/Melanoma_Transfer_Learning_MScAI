@@ -29,7 +29,7 @@ def Mahbod_ResNet50_Dropout(run_id,
                            activation="relu", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
     x = keras.layers.Dropout(rate=0.5)(x)
-    predictions = keras.layers.Dense(units=64, 
+    predictions = keras.layers.Dense(units=3, 
                            activation="relu", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
 
