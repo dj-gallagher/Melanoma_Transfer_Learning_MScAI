@@ -12,16 +12,16 @@ if __name__ == '__main__':
     #tf.debugging.set_log_device_placement(True)
     
     with  tf.device("/gpu:0"):
-        run_id = "Mahbod_LS_1"
+        run_id = "Mahbod_WD_1"
         EPOCHS = 15
         BATCH_SIZE = 64
         AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
         DATASET = "ISIC" # ISIC / HAM10000
-        LABEL_SMOOTHING = 0.1
+        LABEL_SMOOTHING = 0.3
         IMG_WIDTH = 128
         IMG_HEIGHT = 128
         LR = 0.0001
-        DROPOUT_RATE = 0
+        DROPOUT_RATE = 0.1
         LR_SCHEDULE = False
         
         # Create training and validation sets from metadata and images folder
@@ -32,13 +32,13 @@ if __name__ == '__main__':
         #model = ResNet50_Hosseinzadeh(run_id)
         #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         
-        model = Mahbod_ResNet50_Dropout(run_id=run_id, 
-                                        label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-                                        lr=LR, dropout_rate=DROPOUT_RATE)
-        
-        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
+        #model = Mahbod_ResNet50_Dropout(run_id=run_id, 
         #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-        #                                lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
+        #                                lr=LR, dropout_rate=DROPOUT_RATE)
+        
+        model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
+                                        label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+                                        lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
         
         # Train the model, logging training data with TensorBoard callback

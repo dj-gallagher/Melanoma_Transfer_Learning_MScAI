@@ -132,7 +132,9 @@ def ResNet50_Mahbod(run_id,
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-def ResNet50_Hosseinzadeh(run_id, label_smoothing):
+def ResNet50_Hosseinzadeh(run_id="Hoss", 
+                        label_smooth_factor=0, img_width=224, img_height=224, 
+                        lr=0.0001, dropout_rate=0.5):
     
     # DEFINING MODEL LAYERS
     # ---------------------------

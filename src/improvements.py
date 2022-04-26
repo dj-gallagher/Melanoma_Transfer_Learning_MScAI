@@ -58,16 +58,6 @@ def Mahbod_ResNet50_Dropout(run_id,
         layer = model.get_layer(name=layer_name)
         layer.trainable = trainable_bool
         
-    '''# ADD WEIGHT DECAY
-    # -------------------------------------
-    # source: https://jricheimer.github.io/keras/2019/02/06/keras-hack-1/
-    alpha = 0.00002  # weight decay coefficient
-    for layer in model.layers:
-        if isinstance(layer, keras.layers.Conv2D) or isinstance(layer, keras.layers.Dense):
-            layer.add_loss(keras.regularizers.l2(alpha)(layer.kernel))
-        if hasattr(layer, 'bias_regularizer') and layer.use_bias:
-            layer.add_loss(keras.regularizers.l2(alpha)(layer.bias))'''
-    
     
     # OPTIMIZERS
     # -------------------------------------
@@ -99,12 +89,12 @@ def Mahbod_ResNet50_Dropout(run_id,
 
 def Mahbod_Resnet50_CosineLRDecay(run_id, 
                                 label_smooth_factor=0, 
-                                img_width=224, 
-                                img_height=224, 
+                                img_width=128, 
+                                img_height=128, 
                                 lr=0.0001,
-                                dropout_rate=0.5,
+                                dropout_rate=0,
                                 train_size=0,
-                                batch_size=32,
+                                batch_size=64,
                                 num_epochs=15):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
@@ -126,16 +116,20 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dropout(rate=dropout_rate)(x)
     x = keras.layers.Dense(units=64, 
                            activation="relu", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax",
-                                     kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+    x = keras.layers.Dropout(rate=dropout_rate)(x)
+    predictions = keras.layers.Dense(units=3, 
+                           activation="softmax", 
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
                                name=run_id) 
+    
     
     # UNFREEZE 17TH BLOCK
     # -------------------------------------
