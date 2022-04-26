@@ -3,7 +3,7 @@ from src.preprocessing import run_preprocessing
 from src.evaluate import evaluate_model
 from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model
 from src.preprocessing import *
-from src.improvements import Mahbod_ResNet50_Dropout
+from src.improvements import Mahbod_ResNet50_Dropout, Mahbod_Resnet50_CosineLRDecay
 
 import matplotlib.pyplot as plt
 
@@ -22,6 +22,7 @@ if __name__ == '__main__':
         IMG_HEIGHT = 128
         LR = 0.0001
         DROPOUT_RATE = 0
+        LR_SCHEDULE = False
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE, augment=AUGMENTATION, dataset_name=DATASET, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
@@ -30,11 +31,18 @@ if __name__ == '__main__':
         # Create a model, pass run id as arguement
         #model = ResNet50_Hosseinzadeh(run_id)
         #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
-        model = Mahbod_ResNet50_Dropout(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR, dropout_rate=DROPOUT_RATE)
+        
+        model = Mahbod_ResNet50_Dropout(run_id=run_id, 
+                                        label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+                                        lr=LR, dropout_rate=DROPOUT_RATE)
+        
+        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
+        #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+        #                                lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
         
         # Train the model, logging training data with TensorBoard callback
-        trained_model = train_model(model, train, train_size, val, val_size, EPOCHS)
+        trained_model = train_model(model, train, train_size, val, val_size, EPOCHS, BATCH_SIZE, lr_schedule=LR_SCHEDULE)
         
         # Find test set accuracy and save predictions
         evaluate_model(trained_model, DATASET, BATCH_SIZE, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)  

@@ -363,7 +363,7 @@ def save_training_plots(history, model_name, num_epochs):
 # MODEL TRAINING 
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def train_model(model, train, train_size, val, val_size, num_epochs):
+def train_model(model, train, train_size, val, val_size, num_epochs, batch_size, lr_schedule=True):
     
     # Create directories to store training checkpoints
     #os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
@@ -374,14 +374,19 @@ def train_model(model, train, train_size, val, val_size, num_epochs):
     
     # Values for ISIC 2017, will have to make this automatic later
     # Used to calcualte how many steps per epoch and per validation 
-    batch_size = 32
+    #batch_size = 32
     
-    # Create list of callback functions
-    checkpoint_cb = create_checkpoint_callback(model.name)
-    #cb_tensorboard = create_tensorboard_callback(model.name)
-    lr_schedule_cb = create_lr_scheduler_cb()
-    cb_list = [checkpoint_cb, lr_schedule_cb]
-    
+    if lr_schedule:
+        # Create list of callback functions
+        checkpoint_cb = create_checkpoint_callback(model.name)
+        #cb_tensorboard = create_tensorboard_callback(model.name)
+        lr_schedule_cb = create_lr_scheduler_cb()
+        cb_list = [checkpoint_cb, lr_schedule_cb]
+    else:
+        # Create list of callback functions
+        checkpoint_cb = create_checkpoint_callback(model.name)
+       
+        cb_list = [checkpoint_cb]
         
     history = model.fit(train, 
                 epochs=num_epochs,

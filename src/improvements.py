@@ -30,7 +30,7 @@ def Mahbod_ResNet50_Dropout(run_id,
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
     x = keras.layers.Dropout(rate=0.5)(x)
     predictions = keras.layers.Dense(units=3, 
-                           activation="relu", 
+                           activation="softmax", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
 
     # Create model using forzen base layers and new FC layers
@@ -102,7 +102,10 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
                                 img_width=224, 
                                 img_height=224, 
                                 lr=0.0001,
-                                dropout_rate=0.5):
+                                dropout_rate=0.5,
+                                train_size=0,
+                                batch_size=32,
+                                num_epochs=15):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -155,9 +158,13 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     
     # OPTIMIZER
     # -------------------------------------  
+    
+    # decay steps = (batches per epoch) * (number of epochs)
+    steps = (train_size // batch_size) * (num_epochs)
+    
     # Cosine learning rate decay 
     lr_decay_function = keras.experimental.CosineDecay(initial_learning_rate=lr,
-                                                        decay_steps=150,
+                                                        decay_steps=steps,
                                                         alpha=lr*0.01) # minimum learning rate
     
      
@@ -187,14 +194,10 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     return model
 
 
-def grayworld(img, label):
-    #cv2.xphoto.GrayworldWB()
-    
-    pass
-
     
 #if __name__ == '__main__':
     #model = Mahbod_ResNet50_Dropout(run_id="TEST")
+    #model = Mahbod_Resnet50_CosineLRDecay("TEST")
     #print(model.summary())
     
             
