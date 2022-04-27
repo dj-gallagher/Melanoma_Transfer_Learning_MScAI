@@ -1,4 +1,4 @@
-from src.preprocessing import read_test_csv_to_dataset, read_HAM10000_csv_to_dataset, rescale_and_resize, rescale_2
+from src.preprocessing import read_test_csv_to_dataset, read_HAM10000_csv_to_dataset2, rescale_and_resize, mahdbod_preprocess_augment_dataset, hoss_preprocess_augment_dataset
 import pandas as pd
 from tensorflow import keras
 import os
@@ -16,21 +16,13 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         test_steps = ceil(test_size / batch_size)
         
         # Convert filepaths to images and resize
-        '''test, test_size = rescale_and_resize(ds=test_ds,
-                                ds_size=test_size,
-                                batch_size=batch_size,
-                                training_set=False,
-                                augment=augmentation,
-                                img_width=img_width,
-                                img_height=img_height)'''
-                                
-        test, test_size = rescale_2(test_ds, 
-                                    test_size, 
-                                    batch_size, 
-                                    False, 
-                                    augmentation, 
-                                    img_width, 
-                                    img_height)
+        test, test_size = mahdbod_preprocess_augment_dataset(test_ds, 
+                                                            test_size, 
+                                                            batch_size, 
+                                                            False, 
+                                                            augmentation, 
+                                                            img_width, 
+                                                            img_height)
         
         # Evaluate model and save results in csv file
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
@@ -48,20 +40,23 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         
     elif dataset=="HAM10000":
         # Load file paths of test images to a tf dataset
-        train_ds, train_size, test, test_size = read_HAM10000_csv_to_dataset()
+        #train_ds, train_size, test, test_size = read_HAM10000_csv_to_dataset()
+        train_other, train_other_size, test_other, test_other_size, train_nev, train_nev_size, test_nev, test_nev_size = read_HAM10000_csv_to_dataset2()
         
-        # Batch size the same as training set
-        batch_size = 32
-        test_steps = ceil(test_size / batch_size)
         
         # Convert filepaths to images and resize
-        test, test_size = rescale_and_resize(ds=test_ds,
-                                ds_size=test_size,
-                                batch_size=batch_size,
-                                training_set=False,
-                                augment=augmentation,
-                                img_width=img_width,
-                                img_height=img_height)
+        test, test_size = hoss_preprocess_augment_dataset(test_other,
+                                                        test_other_size,
+                                                        test_nev,
+                                                        test_nev_size, 
+                                                        batch_size,
+                                                        training_set=False,
+                                                        augment=augmentation,
+                                                        img_width=img_width,
+                                                        img_height=img_height)
+        
+        # number of test steps
+        test_steps = ceil(test_size / batch_size)
         
         # Evaluate model and save results in csv file
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
@@ -69,12 +64,15 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         # Add extra information
         metrics_dict["run_id"] = model.name
         metrics_dict["Epochs"] = num_epochs
+        metrics_dict["Batch_Size"] = batch_size
         metrics_dict["Augmentation"] = augmentation
         metrics_dict["Image_Resolution"] = f"{img_width}x{img_height}"
         
         metrics_df = pd.DataFrame(metrics_dict, index=[0])
         
         metrics_df.to_csv(f"./output/results/{model.name}/test_scores.csv")
+    
+    
     
 #if __name__ == '__main__':
     

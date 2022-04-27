@@ -12,19 +12,6 @@ import tensorflow as tf
 from math import ceil
 import cv2
 
-'''test_ds, test_size, test_labels = read_test_csv_to_dataset()
-
-batch_size = 32
-test_steps = ceil(test_size / batch_size)
-
-test_size = 2
-
-test = rescale_and_resize(ds=test_ds,
-                            ds_size=test_size,
-                            batch_size=1,
-                            training_set=True)
-
-test = test.unbatch()'''
 
 def augment_image(image, label, 
                   brightness=False,
@@ -86,29 +73,7 @@ def augment_image(image, label,
         
     #if grayworld:
         #image = cv2.xphoto_GrayworldWB.getSaturationThreshold()
-    '''
-    # Hue Augmentation
-    # =======================================================================================================================
-    if hue:
-        tf.image.stateless_random_hue(image,
-                                      max_delta=conf.ppro.aug.hue.delta,
-                                      seed=conf.seed2)
-
-    # JPEG Quality Augmentation
-    # =======================================================================================================================
-    if jpeg_quality:
-        tf.image.stateless_random_jpeg_quality(image,
-                                               min_jpeg_quality=conf.ppro.aug.jpeg_quality.min_jpeg_quality,
-                                               max_jpeg_quality=conf.ppro.aug.jpeg_quality.max_jpeg_quality,
-                                               seed=conf.seed2)
-    # Saturation Augmentation
-    # =======================================================================================================================
-    if saturation:
-        tf.image.stateless_random_saturation(image,
-                                             lower=conf.ppro.aug.saturation.lower,
-                                             upper=conf.ppro.aug.saturation.upper,
-                                             seed=conf.seed2)
-    '''
+    
     return image, label
 
 def augment_dataset(ds, ds_size, augment):
@@ -150,7 +115,7 @@ def augment_dataset(ds, ds_size, augment):
         
     elif augment=="Hosseinzadeh":
         
-        ds_size = ds_size*3
+        ds_size = ds_size*5
         
         # horizontal flip
         aug_1 = ds.map( lambda image, label: augment_image(image, label, horizontal_flip=True), tf.data.experimental.AUTOTUNE )
@@ -159,16 +124,14 @@ def augment_dataset(ds, ds_size, augment):
         aug_2 = ds.map( lambda image, label: augment_image(image, label, vertical_flip=True), tf.data.experimental.AUTOTUNE )
         
         # random brightness
-        #aug_3 = ds.map( lambda image, label: augment_image(image, label, brightness=True) )
+        aug_3 = ds.map( lambda image, label: augment_image(image, label, brightness=True), tf.data.experimental.AUTOTUNE )
         
         # random contrast
-        #aug_4 = ds.map( lambda image, label: augment_image(image, label, contrast=True) )
+        aug_4 = ds.map( lambda image, label: augment_image(image, label, contrast=True), tf.data.experimental.AUTOTUNE )
         
         ds = (ds.concatenate(aug_1)
-                .concatenate(aug_2))
+                .concatenate(aug_2)
+                .concatenate(aug_3)
+                .concatenate(aug_4))
 
-
-    #ds = ds.shuffle(buffer_size=ds_size)        
-    
-    # Return all datesets combined and new dataset size
     return ds, ds_size

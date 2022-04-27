@@ -6,43 +6,63 @@ from src.preprocessing import *
 from src.improvements import Mahbod_ResNet50_Dropout, Mahbod_Resnet50_CosineLRDecay
 
 import matplotlib.pyplot as plt
+import math
 
 if __name__ == '__main__':
     
     #tf.debugging.set_log_device_placement(True)
     
     with  tf.device("/gpu:0"):
-        run_id = "Mahbod_WD_1"
+        run_id = "Hoss_BL_1"
         EPOCHS = 15
-        BATCH_SIZE = 64
-        AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
-        DATASET = "ISIC" # ISIC / HAM10000
-        LABEL_SMOOTHING = 0.3
-        IMG_WIDTH = 128
-        IMG_HEIGHT = 128
-        LR = 0.0001
-        DROPOUT_RATE = 0.1
+        BATCH_SIZE = 32
+        AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
+        DATASET = "HAM10000" # ISIC / HAM10000
+        LABEL_SMOOTHING = 0
+        IMG_WIDTH = 225
+        IMG_HEIGHT = 300
+        LR = (math.e)**(-5)
+        DROPOUT_RATE = 0.5
         LR_SCHEDULE = False
+        WEIGHT_DECAY = (math.e)**(-5)
         
         # Create training and validation sets from metadata and images folder
-        train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE, augment=AUGMENTATION, dataset_name=DATASET, img_width=IMG_WIDTH, img_height=IMG_HEIGHT)
+        train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE,
+                                                             augment=AUGMENTATION,
+                                                             dataset_name=DATASET,
+                                                             img_width=IMG_WIDTH,
+                                                             img_height=IMG_HEIGHT)
     
-        #with tf.device("/gpu:0"):
         # Create a model, pass run id as arguement
-        #model = ResNet50_Hosseinzadeh(run_id)
+        # ----------------------------------------
         #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         
         #model = Mahbod_ResNet50_Dropout(run_id=run_id, 
         #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
         #                                lr=LR, dropout_rate=DROPOUT_RATE)
         
-        model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
-                                        label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-                                        lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
+        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
+        #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+        #                                lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
+        model = ResNet50_Hosseinzadeh(run_id=run_id, 
+                                    label_smooth_factor=LABEL_SMOOTHING,
+                                    img_width=IMG_WIDTH, 
+                                    img_height=IMG_HEIGHT, 
+                                    lr=LR, 
+                                    dropout_rate=DROPOUT_RATE,
+                                    weight_decay=WEIGHT_DECAY)
+        # ----------------------------------------
         
         # Train the model, logging training data with TensorBoard callback
-        trained_model = train_model(model, train, train_size, val, val_size, EPOCHS, BATCH_SIZE, lr_schedule=LR_SCHEDULE)
+        trained_model = train_model(model,
+                                    train, 
+                                    train_size,
+                                    val,
+                                    val_size,
+                                    EPOCHS,
+                                    BATCH_SIZE,
+                                    lr_schedule=LR_SCHEDULE)
         
         # Find test set accuracy and save predictions
         evaluate_model(trained_model, DATASET, BATCH_SIZE, EPOCHS, AUGMENTATION, IMG_WIDTH, IMG_HEIGHT)  

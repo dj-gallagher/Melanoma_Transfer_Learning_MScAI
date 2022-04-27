@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-#from keras_lr_multiplier import LRMultiplier
+import tempfile
 
 matplotlib.use('Agg') # https://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined/3054314#3054314
 
@@ -132,15 +132,47 @@ def ResNet50_Mahbod(run_id,
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
+# Source: https://sthalles.github.io/keras-regularizer/
+def add_regularization(model, regularizer=tf.keras.regularizers.l2(0.0001)):
+
+    if not isinstance(regularizer, tf.keras.regularizers.Regularizer):
+      print("Regularizer must be a subclass of tf.keras.regularizers.Regularizer")
+      return model
+
+    for layer in model.layers:
+        for attr in ['kernel_regularizer']:
+            if hasattr(layer, attr):
+              setattr(layer, attr, regularizer)
+
+    # When we change the layers attributes, the change only happens in the model config file
+    # Must reload model to make changes effective
+    model_json = model.to_json()
+
+    # Save the weights before reloading the model.
+    tmp_weights_path = os.path.join(tempfile.gettempdir(), 'tmp_weights.h5')
+    model.save_weights(tmp_weights_path)
+
+    # load the model from the config
+    model = tf.keras.models.model_from_json(model_json)
+    
+    # Reload the model weights
+    model.load_weights(tmp_weights_path, by_name=True)
+    return model
+
+
 def ResNet50_Hosseinzadeh(run_id="Hoss", 
-                        label_smooth_factor=0, img_width=224, img_height=224, 
-                        lr=0.0001, dropout_rate=0.5):
+                        label_smooth_factor=0,
+                        img_width=224, 
+                        img_height=224, 
+                        lr=0.0001, 
+                        dropout_rate=0.5,
+                        weight_decay=(math.e)**(-5)):
     
     # DEFINING MODEL LAYERS
     # ---------------------------
     base_model = keras.applications.resnet50.ResNet50(include_top=False,
                                                       weights="imagenet",
-                                                      input_shape=(224,224,3))
+                                                      input_shape=(img_width,img_height,3))
     
     base_model.trainable = True 
 
@@ -157,10 +189,14 @@ def ResNet50_Hosseinzadeh(run_id="Hoss",
                                outputs=predictions, 
                                name=run_id) 
 
-
+    
+    # Add L2 regularization to all layers - Source: https://sthalles.github.io/keras-regularizer/
+    regularizer = tf.keras.regularizers.l2(l=0.0001)
+    model = add_regularization(model=model, regularizer=regularizer)
+    
     # OPTIMIZERS
     # -------------------------------------    
-    optimizer = tfa.optimizers.AdamW(weight_decay=(math.e)**(-5),
+    optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
                                      learning_rate=(math.e)**(-5),
                                      beta_1=0.9,
                                      beta_2=0.999,
@@ -340,8 +376,8 @@ def create_lr_scheduler_cb():
 # ------------------------------------------------------------------------------------------------
 
 def save_training_plots(history, model_name, num_epochs):
+    
     # The following code will save an image showing the above metrics for the model during the training process. 
-
     plt.style.use("ggplot")
     plt.figure()
     plt.plot(np.arange(0, num_epochs), history.history["loss"], label="train_loss")
@@ -365,7 +401,14 @@ def save_training_plots(history, model_name, num_epochs):
 # MODEL TRAINING 
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-def train_model(model, train, train_size, val, val_size, num_epochs, batch_size, lr_schedule=True):
+def train_model(model,
+                train,
+                train_size,
+                val,
+                val_size,
+                num_epochs,
+                batch_size,
+                lr_schedule=True):
     
     # Create directories to store training checkpoints
     #os.mkdir(f"./output/logs/fit/{model.name}") # tensorboard cb
@@ -414,10 +457,9 @@ def train_model(model, train, train_size, val, val_size, num_epochs, batch_size,
 # ------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    model = ResNet50_Mahbod("Test")
-    #for layer in model.layers:
-    #    if layer.trainable:
-    #        print(layer.name
+    model = ResNet50_Hosseinzadeh("Test")
+    
+    print(model.losses)
     
 
     

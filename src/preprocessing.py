@@ -61,6 +61,7 @@ def read_test_csv_to_dataset():
 
     return test_ds, test_size, test_labels.values
 
+
 def read_HAM10000_csv_to_dataset():
     
     # Read in filepaths and labels
@@ -84,7 +85,50 @@ def read_HAM10000_csv_to_dataset():
     test_ds = tf.data.Dataset.from_tensor_slices( (test_image_paths.values, test_labels.values) )
     
     return train_ds, train_size, test_ds, test_size
+
+
+def read_HAM10000_csv_to_dataset2():
+    
+    # Read in filepaths and labels
+    train_df = pd.read_csv("./metadata/train.csv")
+    test_df = pd.read_csv("./metadata/test.csv")
+
+    # split into nevus and non nevus images
+    train_other_df = train_df[ train_df["nv"]==0 ]
+    test_other_df = test_df[ test_df["nv"]==0 ]
+    train_nev_df = train_df[ train_df["nv"]==1 ]
+    test_nev_df = test_df[ test_df["nv"]==1 ]
+    
+    # Record dataset sizes for later use
+    train_other_size = train_other_df.shape[0]
+    test_other_size = test_other_df.shape[0]
+    train_nev_size = train_nev_df.shape[0]
+    test_nev_size = test_nev_df.shape[0]
+
+    
+    # Extract filepaths for creating tf dataset
+    train_other_image_paths = "./images/HAM10000/" + train_other_df["image_id"] + ".jpg"
+    test_other_image_paths = "./images/HAM10000/" + test_other_df["image_id"] + ".jpg"
+    train_nev_image_paths = "./images/HAM10000/" + train_nev_df["image_id"] + ".jpg"
+    test_nev_image_paths = "./images/HAM10000/" + test_nev_df["image_id"] + ".jpg"
+    
+    # Extract OneHot Labels for creating tf dataset
+    train_other_labels = train_other_df.iloc[:,1:] 
+    test_other_labels = test_other_df.iloc[:,1:] 
+    train_nev_labels = train_nev_df.iloc[:,1:] 
+    test_nev_labels = test_nev_df.iloc[:,1:] 
+    
+    # Create tf dataset objects
+    train_other_ds = tf.data.Dataset.from_tensor_slices( (train_other_image_paths.values, train_other_labels.values) )
+    test_other_ds = tf.data.Dataset.from_tensor_slices( (test_other_image_paths.values, test_other_labels.values) )
+    train_nev_ds = tf.data.Dataset.from_tensor_slices( (train_nev_image_paths.values, train_nev_labels.values) )
+    test_nev_ds = tf.data.Dataset.from_tensor_slices( (test_nev_image_paths.values, test_nev_labels.values) )
+    
+    return train_other_ds, train_other_size, test_other_ds, test_other_size, train_nev_ds, train_nev_size, test_nev_ds, test_nev_size
 # ====================================================================================================
+
+
+
 def map_decorator(func):
     def wrapper(steps, times, values):
         # Use a tf.py_function to prevent auto-graph from compiling the method
@@ -141,7 +185,7 @@ def rescale_and_resize_image(file_path, label, width, height):
 
     return image, label
 
-def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
+def mahdbod_preprocess_augment_dataset(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
 
     if training_set:
         # Load image data from filepaths
@@ -164,6 +208,47 @@ def rescale_2(ds, ds_size, batch_size, training_set, augment, img_width, img_hei
     
     return ds, ds_size
 
+
+def hoss_preprocess_augment_dataset(ds_other, ds_other_size, ds_nev, ds_nev_size,
+                                    batch_size, training_set, augment, img_width, img_height):
+    
+    # Train and val sets are cached, shuffled and repeated
+    if training_set:
+        # Load image data from filepaths of nevus and non nevus images
+        ds_other = ds_other.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
+        ds_nev = ds_nev.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
+        
+        # Apply augmentation to increase dataset size of non nevus images
+        ds_other, ds_other_size = augment_dataset(ds_other, ds_other_size, augment)
+        
+        # Combine nevus and augmented non-nevus images to form balanced dataset
+        ds = ds_other.concatenate(ds_nev)
+        ds_size = ds_other_size + ds_nev_size
+        
+        # Cache augmented data
+        ds = ds.cache()
+        # Shuffle and repeat the augmented dataset for use in multiple epochss
+        ds = ds.shuffle(buffer_size=ds_size, seed=42, reshuffle_each_iteration=True).repeat()
+        # batch and prefetch
+        ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    
+    # test set does not need to bee cached, shuffled or repeated
+    else:
+        # Load image data from filepaths of nevus and non nevus images
+        ds_other = ds_other.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
+        ds_nev = ds_nev.map(lambda feature, label: rescale_and_resize_image(feature, label, width=img_width, height=img_height), tf.data.experimental.AUTOTUNE)
+        
+        # Apply augmentation to increase dataset size of non nevus images
+        ds_other, ds_other_size = augment_dataset(ds_other, ds_other_size, augment)
+        
+        # Combine nevus and augmented non-nevus images to form balanced dataset
+        ds = ds_other.concatenate(ds_nev)
+        ds_size = ds_other_size + ds_nev_size
+        
+        # batch and prefetch (no repeat needed for test set)
+        ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    
+    return ds, ds_size
 
 
 def rescale_and_resize(ds, ds_size, batch_size, training_set, augment, img_width, img_height):
@@ -246,19 +331,72 @@ def run_preprocessing(batch_size, augment, dataset_name, img_width, img_height):
         
         #train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
         #val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-        train, train_size = rescale_2(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-        val, val_size = rescale_2(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
+        train, train_size = mahdbod_preprocess_augment_dataset(train,
+                                                               train_size,
+                                                               batch_size,
+                                                               training_set=True,
+                                                               augment=augment,
+                                                               img_width=img_width,
+                                                               img_height=img_height)
+        
+        val, val_size = mahdbod_preprocess_augment_dataset(val,
+                                                           val_size,
+                                                           batch_size,
+                                                           training_set=True,
+                                                           augment=augment,
+                                                           img_width=img_width,
+                                                           img_height=img_height)
         
         
     elif dataset_name == "HAM10000":
-        # For batching the tf dataset objects
         
-        
+        """# load filepath datasets, use the test set as a validation set 
         train, train_size, val, val_size = read_HAM10000_csv_to_dataset()
         
-        train, train_size = rescale_and_resize(train, train_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-        val, val_size = rescale_and_resize(val, val_size, batch_size, training_set=True, augment=augment, img_width=img_width, img_height=img_height)
-    
+        train, train_size = hoss_preprocess_augment_dataset(train,
+                                                            train_size, 
+                                                            batch_size,
+                                                            training_set=True,
+                                                            augment=augment,
+                                                            img_width=img_width,
+                                                            img_height=img_height)
+        val, val_size = hoss_preprocess_augment_dataset(val,
+                                                        val_size,
+                                                        batch_size,
+                                                        training_set=True, 
+                                                        augment=augment, 
+                                                        img_width=img_width,
+                                                        img_height=img_height)"""
+
+        # load filepath datasets of nevus and other classes
+        train_other, train_other_size, val_other, val_other_size, train_nev, train_nev_size, val_nev, val_nev_size = read_HAM10000_csv_to_dataset2()
+        
+        # augment non nevus images and combine with nevus images to form final dataset
+        train, train_size = hoss_preprocess_augment_dataset(train_other,
+                                                            train_other_size, 
+                                                            train_nev,
+                                                            train_nev_size,
+                                                            batch_size,
+                                                            training_set=True,
+                                                            augment=augment,
+                                                            img_width=img_width,
+                                                            img_height=img_height)
+        
+        val, val_size = hoss_preprocess_augment_dataset(val_other,
+                                                        val_other_size,
+                                                        val_nev,
+                                                        val_nev_size, 
+                                                        batch_size,
+                                                        training_set=True,
+                                                        augment=augment,
+                                                        img_width=img_width,
+                                                        img_height=img_height)
+        
+        
+        
+        
     return train, train_size, val, val_size
     
-    
+
+if __name__ == '__main__':
+    read_HAM10000_csv_to_dataset2()
