@@ -229,14 +229,15 @@ def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss",
     model = add_regularization(model=model, regularizer=regularizer)
     
     # OPTIMIZERS
-    # -------------------------------------   
+    # -------------------------------------  
+    
+    # decay steps = (batches per epoch) * (number of epochs)
+    steps = (train_size // batch_size) * (num_epochs)
+     
     # Cosine learning rate decay 
     lr_decay_function = keras.experimental.CosineDecay(initial_learning_rate=lr,
                                                         decay_steps=steps,
                                                         alpha=lr*0.01) # minimum learning rate
-    
-    # decay steps = (batches per epoch) * (number of epochs)
-    steps = (train_size // batch_size) * (num_epochs)
     
     optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
                                      learning_rate=lr_decay_function,
