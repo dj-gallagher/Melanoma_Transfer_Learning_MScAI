@@ -35,7 +35,7 @@ def augment_image(image, label,
     # Get the image, resized and rescaled.
     #image, label = rescale_and_resize_image(file_path, label, )
 
-    seed = (1,2)
+    seed = 42
     # Brightness Augmentation
     # =======================================================================================================================
     if brightness:
