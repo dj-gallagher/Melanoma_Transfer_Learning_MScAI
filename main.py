@@ -25,6 +25,7 @@ if __name__ == '__main__':
         DROPOUT_RATE = 0.5
         LR_SCHEDULE = False
         WEIGHT_DECAY = (math.e)**(-5)
+        MIN_LR_FACTOR = 0.01
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE,
@@ -64,6 +65,7 @@ if __name__ == '__main__':
                                                     lr=(math.e)**(-5), 
                                                     dropout_rate=0.5,
                                                     weight_decay=(math.e)**(-5),
+                                                    min_lr_factor=MIN_LR_FACTOR,
                                                     train_size=train_size,
                                                     batch_size=BATCH_SIZE,
                                                     num_epochs=EPOCHS)
