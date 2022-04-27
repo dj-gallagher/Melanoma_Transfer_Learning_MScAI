@@ -248,7 +248,7 @@ def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss",
     
     # LOSS FUNCTION AND METRICS
     # -------------------------------------
-    loss_func = keras.losses.CategoricalCrossentropy()
+    loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
     metrics_list = ['accuracy',
                     keras.metrics.AUC( multi_label=True )] 
     
