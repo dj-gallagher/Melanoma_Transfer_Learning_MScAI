@@ -1,9 +1,9 @@
 import tensorflow as tf
 from src.preprocessing import run_preprocessing
 from src.evaluate import evaluate_model
-from src.model import ResNet50_Mahbod, ResNet50_Hosseinzadeh, ResNet50, train_model
+from src.model import *
 from src.preprocessing import *
-from src.improvements import Mahbod_ResNet50_Dropout, Mahbod_Resnet50_CosineLRDecay
+from src.improvements import *
 
 import matplotlib.pyplot as plt
 import math
@@ -13,7 +13,7 @@ if __name__ == '__main__':
     #tf.debugging.set_log_device_placement(True)
     
     with  tf.device("/gpu:0"):
-        run_id = "Hoss_BL_1"
+        run_id = "Hoss_CL_1"
         EPOCHS = 15
         BATCH_SIZE = 32
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
@@ -32,7 +32,11 @@ if __name__ == '__main__':
                                                              dataset_name=DATASET,
                                                              img_width=IMG_WIDTH,
                                                              img_height=IMG_HEIGHT)
-    
+        print("\n")
+        print("TRAINING SET SIZE = ", train_size)
+        print("VALIDATION SET SIZE = ", val_size)
+        print("\n")
+        
         # Create a model, pass run id as arguement
         # ----------------------------------------
         #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
@@ -45,13 +49,24 @@ if __name__ == '__main__':
         #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
         #                                lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
-        model = ResNet50_Hosseinzadeh(run_id=run_id, 
-                                    label_smooth_factor=LABEL_SMOOTHING,
-                                    img_width=IMG_WIDTH, 
-                                    img_height=IMG_HEIGHT, 
-                                    lr=LR, 
-                                    dropout_rate=DROPOUT_RATE,
-                                    weight_decay=WEIGHT_DECAY)
+        #model = ResNet50_Hosseinzadeh(run_id=run_id, 
+        #                            label_smooth_factor=LABEL_SMOOTHING,
+        #                            img_width=IMG_WIDTH, 
+        #                            img_height=IMG_HEIGHT, 
+        #                            lr=LR, 
+        #                            dropout_rate=DROPOUT_RATE,
+        #                            weight_decay=WEIGHT_DECAY)
+        
+        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss", 
+                                                    label_smooth_factor=0,
+                                                    img_width=225, 
+                                                    img_height=300, 
+                                                    lr=(math.e)**(-5), 
+                                                    dropout_rate=0.5,
+                                                    weight_decay=(math.e)**(-5),
+                                                    train_size=train_size,
+                                                    batch_size=BATCH_SIZE,
+                                                    num_epochs=EPOCHS)
         # ----------------------------------------
         
         # Train the model, logging training data with TensorBoard callback

@@ -162,8 +162,8 @@ def add_regularization(model, regularizer=tf.keras.regularizers.l2(0.0001)):
 
 def ResNet50_Hosseinzadeh(run_id="Hoss", 
                         label_smooth_factor=0,
-                        img_width=224, 
-                        img_height=224, 
+                        img_width=225, 
+                        img_height=300, 
                         lr=0.0001, 
                         dropout_rate=0.5,
                         weight_decay=(math.e)**(-5)):

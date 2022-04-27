@@ -1,5 +1,8 @@
 import tensorflow as tf
 from tensorflow import keras 
+import tensorflow_addons as tfa
+import math 
+from model import add_regularization
 
 def Mahbod_ResNet50_Dropout(run_id, 
                             label_smooth_factor=0, 
@@ -187,6 +190,75 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     
     return model
 
+
+def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss", 
+                                        label_smooth_factor=0,
+                                        img_width=225, 
+                                        img_height=300, 
+                                        lr=(math.e)**(-5), 
+                                        dropout_rate=0.5,
+                                        weight_decay=(math.e)**(-5),
+                                        train_size=0,
+                                        batch_size=32,
+                                        num_epochs=15):
+    
+    # DEFINING MODEL LAYERS
+    # ---------------------------
+    base_model = keras.applications.resnet50.ResNet50(include_top=False,
+                                                      weights="imagenet",
+                                                      input_shape=(img_width,img_height,3))
+    
+    base_model.trainable = True 
+
+    # Define output layers 
+    x = base_model.output
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dropout(rate=0.5)(x)
+    x = keras.layers.Dense(units=64, activation="relu")(x)
+    x = keras.layers.Dropout(rate=0.5)(x)
+    predictions = keras.layers.Dense(units=7, activation="softmax")(x)
+
+    # Create model using forzen base layers and new FC layers
+    model = keras.models.Model(inputs=base_model.input, 
+                               outputs=predictions, 
+                               name=run_id) 
+
+    
+    # Add L2 regularization to all layers - Source: https://sthalles.github.io/keras-regularizer/
+    regularizer = tf.keras.regularizers.l2(l=0.0001)
+    model = add_regularization(model=model, regularizer=regularizer)
+    
+    # OPTIMIZERS
+    # -------------------------------------   
+    # Cosine learning rate decay 
+    lr_decay_function = keras.experimental.CosineDecay(initial_learning_rate=lr,
+                                                        decay_steps=steps,
+                                                        alpha=lr*0.01) # minimum learning rate
+    
+    # decay steps = (batches per epoch) * (number of epochs)
+    steps = (train_size // batch_size) * (num_epochs)
+    
+    optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
+                                     learning_rate=lr_decay_function,
+                                     beta_1=0.9,
+                                     beta_2=0.999,
+                                     epsilon=(math.e)**(-8))
+    
+    # LOSS FUNCTION AND METRICS
+    # -------------------------------------
+    loss_func = keras.losses.CategoricalCrossentropy()
+    metrics_list = ['accuracy',
+                    keras.metrics.AUC( multi_label=True )] 
+    
+    
+    # COMPILE 
+    # -------------------------------------
+    model.compile(optimizer=optimizer ,
+                loss=loss_func ,
+                metrics=metrics_list)
+                
+
+    return model
 
     
 #if __name__ == '__main__':
