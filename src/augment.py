@@ -39,24 +39,16 @@ def augment_image(image, label,
     # Brightness Augmentation
     # =======================================================================================================================
     if brightness:
-        image = tf.image.stateless_random_brightness(image,
-                                                    max_delta=0.2,
-                                                    seed=seed)
+        image = tf.image.random_brightness(image,
+                                            max_delta=0.2,
+                                            seed=seed)
     # Contrast Augmentation
     # =======================================================================================================================
     if contrast:
-        image = tf.image.stateless_random_contrast(image,
-                                                  lower=0.2,
-                                                  upper=0.5,
-                                                  seed=seed)
-    # Crop Augmentation
-    # =======================================================================================================================
-    if crop:
-        image = tf.image.stateless_random_crop(image,
-                                              size=[224,
-                                                    224,
-                                                    3],
-                                              seed=seed)
+        image = tf.image.random_contrast(image,
+                                        lower=0.2,
+                                        upper=0.5,
+                                        seed=seed)
     # Horizontal Flip
     # =======================================================================================================================
     if horizontal_flip:
