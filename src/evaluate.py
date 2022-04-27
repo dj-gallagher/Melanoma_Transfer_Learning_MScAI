@@ -1,7 +1,6 @@
 from src.preprocessing import read_test_csv_to_dataset, read_HAM10000_csv_to_dataset2, rescale_and_resize, mahdbod_preprocess_augment_dataset, hoss_preprocess_augment_dataset
 import pandas as pd
 from tensorflow import keras
-import os
 
 from math import ceil
 

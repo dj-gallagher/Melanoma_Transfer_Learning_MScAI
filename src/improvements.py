@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras 
 import tensorflow_addons as tfa
 import math 
-from model import add_regularization
+from src.model import add_regularization
 
 def Mahbod_ResNet50_Dropout(run_id, 
                             label_smooth_factor=0, 

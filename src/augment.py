@@ -10,7 +10,6 @@ source: https://stackoverflow.com/questions/51136559/mixing-augmented-and-origin
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from math import ceil
-import cv2
 
 
 def augment_image(image, label, 
