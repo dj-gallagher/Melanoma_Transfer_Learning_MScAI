@@ -119,11 +119,11 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dropout(rate=dropout_rate)(x)
+    #
     x = keras.layers.Dense(units=64, 
                            activation="relu", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
-    x = keras.layers.Dropout(rate=dropout_rate)(x)
+    #x = keras.layers.Dropout(rate=dropout_rate)(x)
     predictions = keras.layers.Dense(units=3, 
                            activation="softmax", 
                            kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)

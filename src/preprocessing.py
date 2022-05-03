@@ -99,6 +99,10 @@ def read_HAM10000_csv_to_dataset2():
     train_nev_df = train_df[ train_df["nv"]==1 ]
     test_nev_df = test_df[ test_df["nv"]==1 ]
     
+    # undersample the nevus images
+    train_nev_df = train_nev_df.iloc[:1111]
+    test_nev_df = test_nev_df.iloc[:1111]
+    
     # Record dataset sizes for later use
     train_other_size = train_other_df.shape[0]
     test_other_size = test_other_df.shape[0]
