@@ -10,22 +10,20 @@ import math
 
 if __name__ == '__main__':
     
-    #tf.debugging.set_log_device_placement(True)
-    
     with  tf.device("/gpu:0"):
-        run_id = "Hoss_LS_1"
+        run_id = "Mahbod_BL_10"
         EPOCHS = 15
-        BATCH_SIZE = 32
-        AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
-        DATASET = "HAM10000" # ISIC / HAM10000
-        LABEL_SMOOTHING = 0.1
-        IMG_WIDTH = 225
-        IMG_HEIGHT = 300
-        LR = (math.e)**(-5)
+        BATCH_SIZE = 16
+        AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
+        DATASET = "ISIC" # ISIC / HAM10000
+        LABEL_SMOOTHING = 0
+        IMG_WIDTH = 128
+        IMG_HEIGHT = 128
+        LR = 0.001
         DROPOUT_RATE = 0.5
-        LR_SCHEDULE = False
-        WEIGHT_DECAY = (math.e)**(-5)
-        MIN_LR_FACTOR = 0.1
+        LR_SCHEDULE = True
+        WEIGHT_DECAY = 0
+        MIN_LR_FACTOR = 0
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE,
@@ -40,15 +38,17 @@ if __name__ == '__main__':
         
         # Create a model, pass run id as arguement
         # ----------------------------------------
-        #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
+        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
+                               img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         
-        #model = Mahbod_ResNet50_Dropout(run_id=run_id, 
-        #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-        #                                lr=LR, dropout_rate=DROPOUT_RATE)
+        #model = Mahbod_ResNet50_Dropout(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
+                                        # img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+                                        # lr=LR, dropout_rate=DROPOUT_RATE)
         
-        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, 
-        #                                label_smooth_factor=LABEL_SMOOTHING, img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-        #                                lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, batch_size=BATCH_SIZE, num_epochs=EPOCHS)
+        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
+    #                                      img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+    #                                       lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
+    #                                       batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
         #model = ResNet50_Hosseinzadeh(run_id=run_id, 
         #                            label_smooth_factor=LABEL_SMOOTHING,
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         #                            dropout_rate=DROPOUT_RATE,
         #                            weight_decay=WEIGHT_DECAY)
         
-        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
+        '''model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
                                                     label_smooth_factor=0,
                                                     img_width=225, 
                                                     img_height=300, 
@@ -68,10 +68,10 @@ if __name__ == '__main__':
                                                     min_lr_factor=MIN_LR_FACTOR,
                                                     train_size=train_size,
                                                     batch_size=BATCH_SIZE,
-                                                    num_epochs=EPOCHS)
-        # ----------------------------------------
+                                                    num_epochs=EPOCHS)'''
+        # ----------------------------------------      
         
-        # Train the model, logging training data with TensorBoard callback
+        # Train the model
         trained_model = train_model(model,
                                     train, 
                                     train_size,

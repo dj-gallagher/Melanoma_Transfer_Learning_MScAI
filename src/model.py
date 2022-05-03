@@ -99,8 +99,8 @@ def ResNet50_Mahbod(run_id,
     
     
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=lr)
-    #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
+    #optimizer = keras.optimizers.Adam(learning_rate=lr)
+    optimizer = keras.optimizers.SGD(learning_rate=lr, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     
     # ---------------------------
