@@ -27,14 +27,14 @@ def Mahbod_ResNet50_Dropout(run_id,
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dropout(rate=dropout_rate)(x)
+    x = keras.layers.Dropout(rate=dropout_rate, seed=42)(x)
     x = keras.layers.Dense(units=64, 
                            activation="relu", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
-    x = keras.layers.Dropout(rate=dropout_rate)(x)
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1, seed=42))(x)
+    x = keras.layers.Dropout(rate=dropout_rate, seed=42)(x)
     predictions = keras.layers.Dense(units=3, 
                            activation="softmax", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1, seed=42))(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
@@ -122,11 +122,11 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     #
     x = keras.layers.Dense(units=64, 
                            activation="relu", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1, seed=42))(x)
     #x = keras.layers.Dropout(rate=dropout_rate)(x)
     predictions = keras.layers.Dense(units=3, 
                            activation="softmax", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1, seed=42))(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 

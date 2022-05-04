@@ -41,9 +41,9 @@ def ResNet50_Mahbod(run_id,
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(units=64, 
                            activation="relu", 
-                           kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+                           kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1))(x)
     predictions = keras.layers.Dense(units=3, activation="softmax",
-                                     kernel_initializer=keras.initializers.RandomNormal(mean=0))(x)
+                                     kernel_initializer=keras.initializers.RandomNormal(mean=0, stddev=1))(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
