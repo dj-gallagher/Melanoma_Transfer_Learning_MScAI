@@ -52,7 +52,7 @@ def ResNet50_Mahbod(run_id,
     
     # UNFREEZE 17TH BLOCK
     # -------------------------------------
-    # Create dictionary of layer name and whether the layer is trainable 
+    '''# Create dictionary of layer name and whether the layer is trainable 
     trainable_dict = dict([ (layer.name, layer.trainable) for layer in model.layers ])
     
     # Identify names of layers in 17th block
@@ -67,7 +67,7 @@ def ResNet50_Mahbod(run_id,
     
     for layer_name, trainable_bool in trainable_dict.items():
         layer = model.get_layer(name=layer_name)
-        layer.trainable = trainable_bool
+        layer.trainable = trainable_bool'''
     
 
     # OPTIMIZERS
