@@ -6,10 +6,13 @@ from src.model import add_regularization
 
 def Mahbod_ResNet50_Dropout(run_id, 
                             label_smooth_factor=0, 
-                            img_width=224, 
-                            img_height=224, 
+                            img_width=128, 
+                            img_height=128, 
                             lr=0.0001,
-                            dropout_rate=0.5):
+                            dropout_rate=0,
+                            train_size=0,
+                            batch_size=64,
+                            num_epochs=15):
     """
     Creates a ResNet50 architecture based off the Mahbod et al 
     methodology with added dropout on the new FC layers.
@@ -62,12 +65,24 @@ def Mahbod_ResNet50_Dropout(run_id,
         layer.trainable = trainable_bool
         
     
-    # OPTIMIZERS
-    # -------------------------------------
+    # OPTIMIZER
+    # -------------------------------------  
     
-    #optimizer = keras.optimizers.Adam(learning_rate=lr)
-    optimizer = keras.optimizers.SGD(learning_rate=lr, momentum=0.9)
+    # decay steps = (batches per epoch) * (number of epochs)
+    steps = (train_size // batch_size) * (num_epochs)
+    
+    # Cosine learning rate decay 
+    lr_decay_function = keras.experimental.CosineDecay(initial_learning_rate=lr,
+                                                        decay_steps=steps,
+                                                        alpha=lr*0.01) # minimum learning rate
+    
+     
+    # Standard Optimizer
+    #optimizer = keras.optimizers.Adam(learning_rate=lr_decay_function)
+    optimizer = keras.optimizers.SGD(learning_rate=lr_decay_function, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
+    
+    # ---------------------------
     
     
     # LOSS FUNCTION AND METRICS

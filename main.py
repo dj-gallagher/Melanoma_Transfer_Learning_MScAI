@@ -11,12 +11,12 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Mahbod_CL_1"
+        run_id = "Mahbod_LS_6"
         EPOCHS = 15
-        BATCH_SIZE = 32
+        BATCH_SIZE = 64
         AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
         DATASET = "ISIC" # ISIC / HAM10000
-        LABEL_SMOOTHING = 0
+        LABEL_SMOOTHING = 0.1
         IMG_WIDTH = 128
         IMG_HEIGHT = 128
         LR = 0.001
@@ -42,8 +42,9 @@ if __name__ == '__main__':
         #                       img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         
         #model = Mahbod_ResNet50_Dropout(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
-                                        # img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-                                        # lr=LR, dropout_rate=DROPOUT_RATE)
+        #                                  img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+        #                                   lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
+        #                                   batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
         model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
                                           img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
