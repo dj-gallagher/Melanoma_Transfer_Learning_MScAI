@@ -196,10 +196,15 @@ def ResNet50_Hosseinzadeh(run_id="Hoss",
     # OPTIMIZERS
     # -------------------------------------    
     optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
-                                     learning_rate=(math.e)**(-5),
+                                     learning_rate=lr,
                                      beta_1=0.9,
                                      beta_2=0.999,
                                      epsilon=(math.e)**(-8))
+    
+    #optimizer = keras.optimizers.Adam(learning_rate=lr,
+    #                                beta_1=0.9,
+    #                                beta_2=0.999,
+    #                                epsilon=(math.e)**(-8))
     
     # LOSS FUNCTION AND METRICS
     # -------------------------------------
