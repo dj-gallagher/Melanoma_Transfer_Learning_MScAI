@@ -181,11 +181,11 @@ def rescale_and_resize_image(file_path, label, width, height):
     #image = white_balance(image)
     
     # ImageNet mean RGB intensity subtraction
-    #imagenet_rgb_mean = tf.reshape( tf.constant([0.485, 0.456, 0.406], dtype=tf.float32), [1,1,3]) 
-    #image = image - imagenet_rgb_mean
+    imagenet_rgb_mean = tf.reshape( tf.constant([0.485, 0.456, 0.406], dtype=tf.float32), [1,1,3]) 
+    image = image - imagenet_rgb_mean
     
     # Standardize image
-    image = tf.image.per_image_standardization(image)
+    #image = tf.image.per_image_standardization(image)
 
     return image, label
 
