@@ -112,7 +112,7 @@ def ResNet50_Mahbod(run_id,
     loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
         
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     
     # COMPILE 
@@ -210,7 +210,7 @@ def ResNet50_Hosseinzadeh(run_id="Hoss",
     # -------------------------------------
     loss_func = keras.losses.CategoricalCrossentropy()
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     
     # COMPILE 
@@ -256,7 +256,7 @@ def ResNet152V2_Rahman(model_name):
     optimiser = keras.optimizers.Adam(learning_rate=lr)
     loss_func = keras.losses.CategoricalCrossentropy()
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     model.compile(optimizer=optimiser ,
                 loss=loss_func ,
@@ -324,7 +324,7 @@ def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
     loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
         
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     # COMPILE 
     # -------------------------------------

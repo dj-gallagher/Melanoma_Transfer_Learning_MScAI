@@ -91,7 +91,7 @@ def Mahbod_ResNet50_Dropout(run_id,
     loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
         
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     
     # COMPILE 
@@ -194,7 +194,7 @@ def Mahbod_Resnet50_CosineLRDecay(run_id,
     loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
         
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     
     # COMPILE 
@@ -265,7 +265,7 @@ def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss",
     # -------------------------------------
     loss_func = keras.losses.CategoricalCrossentropy(label_smoothing=label_smooth_factor)
     metrics_list = ['accuracy',
-                    keras.metrics.AUC( multi_label=True )] 
+                    keras.metrics.AUC()] 
     
     
     # COMPILE 
