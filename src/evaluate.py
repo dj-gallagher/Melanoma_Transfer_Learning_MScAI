@@ -28,6 +28,19 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         # Evaluate model and save results in csv file
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
         
+        
+        # confusion matrix 
+        y_pred = model.predict(test) # get predicted labels
+        y_pred = y_pred.argmax(axis=1) # convert to ints
+        
+        plt.figure()
+        plt.grid(False)
+        matrix = confusion_matrix(y_true, y_pred)
+        matrix_plot = ConfusionMatrixDisplay(matrix,
+                               display_labels=["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]).plot()
+        plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
+        
+        
         # Add extra information
         metrics_dict["run_id"] = model.name
         metrics_dict["Epochs"] = num_epochs
@@ -77,9 +90,6 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         matrix_plot = ConfusionMatrixDisplay(matrix,
                                display_labels=["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]).plot()
         plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
-        
-        #np.savetxt(f"./output/results/{model.name}/conf_matrix.csv", matrix, delimiter=",")
-        
         
         
         # Add extra information
