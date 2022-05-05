@@ -308,8 +308,8 @@ def ResNet50(run_id="Hoss",
                                name=run_id) 
 
     # Add L2 regularization to all layers - Source: https://sthalles.github.io/keras-regularizer/
-    regularizer = tf.keras.regularizers.l2(l=0.0001)
-    model = add_regularization(model=model, regularizer=regularizer)
+    #regularizer = tf.keras.regularizers.l2(l=0.0001)
+    #model = add_regularization(model=model, regularizer=regularizer)
 
     # OPTIMIZERS
     # -------------------------------------

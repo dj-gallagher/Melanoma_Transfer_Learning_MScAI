@@ -11,9 +11,9 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Resnet_BL_TEST"
+        run_id = "Resnet_DR_2"
         EPOCHS = 15
-        BATCH_SIZE = 64
+        BATCH_SIZE = 32
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
         DATASET = "HAM10000" # ISIC / HAM10000
         LABEL_SMOOTHING = 0
