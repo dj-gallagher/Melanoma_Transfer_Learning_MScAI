@@ -11,7 +11,7 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Resnet_BL_DR_1"
+        run_id = "Resnet_BL_OPT_1"
         EPOCHS = 15
         BATCH_SIZE = 64
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
@@ -19,10 +19,10 @@ if __name__ == '__main__':
         LABEL_SMOOTHING = 0
         IMG_WIDTH = 225
         IMG_HEIGHT = 300
-        LR = 0.0001
+        LR = (math.e)**(-5)
         DROPOUT_RATE = 0
         LR_SCHEDULE = False
-        WEIGHT_DECAY = 0
+        WEIGHT_DECAY = (math.e)**(-5)
         MIN_LR_FACTOR = 0
         
         # Create training and validation sets from metadata and images folder

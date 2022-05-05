@@ -296,10 +296,10 @@ def ResNet50(run_id="Hoss",
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dropout(rate=0.5)(x)
+    #x = keras.layers.Dropout(rate=0.5)(x)
     x = keras.layers.Dense(units=64, 
                            activation="relu")(x)
-    x = keras.layers.Dropout(rate=0.5)(x)
+    #x = keras.layers.Dropout(rate=0.5)(x)
     predictions = keras.layers.Dense(units=7, activation="softmax")(x)
 
     # Create model using forzen base layers and new FC layers
@@ -310,9 +310,14 @@ def ResNet50(run_id="Hoss",
     # OPTIMIZERS
     # -------------------------------------
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=lr)
+    #optimizer = keras.optimizers.Adam(learning_rate=lr)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
+    optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
+                                     learning_rate=lr,
+                                     beta_1=0.9,
+                                     beta_2=0.999,
+                                     epsilon=(math.e)**(-8))
     # ---------------------------
     
     
