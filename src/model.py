@@ -307,17 +307,21 @@ def ResNet50(run_id="Hoss",
                                outputs=predictions, 
                                name=run_id) 
 
+    # Add L2 regularization to all layers - Source: https://sthalles.github.io/keras-regularizer/
+    regularizer = tf.keras.regularizers.l2(l=0.0001)
+    model = add_regularization(model=model, regularizer=regularizer)
+
     # OPTIMIZERS
     # -------------------------------------
     # Standard Optimizer
-    #optimizer = keras.optimizers.Adam(learning_rate=lr)
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
-    optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
-                                     learning_rate=lr,
-                                     beta_1=0.9,
-                                     beta_2=0.999,
-                                     epsilon=(math.e)**(-8))
+    #optimizer = tfa.optimizers.AdamW(weight_decay=weight_decay,
+    #                                 learning_rate=lr,
+    #                                 beta_1=0.9,
+    #                                 beta_2=0.999,
+    #                                 epsilon=(math.e)**(-8))
     # ---------------------------
     
     
