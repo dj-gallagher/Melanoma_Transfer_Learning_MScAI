@@ -296,8 +296,10 @@ def ResNet50(run_id="Hoss",
     # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dropout(rate=0.5)(x)
     x = keras.layers.Dense(units=64, 
                            activation="relu")(x)
+    x = keras.layers.Dropout(rate=0.5)(x)
     predictions = keras.layers.Dense(units=7, activation="softmax")(x)
 
     # Create model using forzen base layers and new FC layers
