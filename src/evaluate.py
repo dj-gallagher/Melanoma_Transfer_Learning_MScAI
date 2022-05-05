@@ -75,7 +75,7 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         plt.grid(False)
         matrix = confusion_matrix(y_true, y_pred)
         matrix_plot = ConfusionMatrixDisplay(matrix,
-                               display_labels=["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"])
+                               display_labels=["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]).plot()
         plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
         
         #np.savetxt(f"./output/results/{model.name}/conf_matrix.csv", matrix, delimiter=",")
