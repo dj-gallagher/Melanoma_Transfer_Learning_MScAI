@@ -11,14 +11,14 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Mahbod_CL_2"
-        EPOCHS = 15
+        run_id = "Hoss_conf_test"
+        EPOCHS = 3
         BATCH_SIZE = 64
-        AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
-        DATASET = "ISIC" # ISIC / HAM10000
+        AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
+        DATASET = "HAM10000" # ISIC / HAM10000
         LABEL_SMOOTHING = 0
-        IMG_WIDTH = 128
-        IMG_HEIGHT = 128
+        IMG_WIDTH = 225
+        IMG_HEIGHT = 300
         LR = 0.001
         DROPOUT_RATE = 0
         LR_SCHEDULE = False
