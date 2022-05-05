@@ -59,7 +59,7 @@ if __name__ == '__main__':
         #                            dropout_rate=DROPOUT_RATE,
         #                            weight_decay=WEIGHT_DECAY)
         
-        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
+        """model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
                                                     label_smooth_factor=0,
                                                     img_width=225, 
                                                     img_height=300, 
@@ -69,15 +69,15 @@ if __name__ == '__main__':
                                                     min_lr_factor=0.01,
                                                    train_size=train_size,
                                                     batch_size=BATCH_SIZE,
-                                                    num_epochs=EPOCHS) 
+                                                    num_epochs=EPOCHS)"""
         
-        ResNet50(run_id=run_id, 
-                label_smooth_factor=LABEL_SMOOTHING,
-                img_width=IMG_WIDTH, 
-                img_height=IMG_HEIGHT, 
-                lr=LR, 
-                dropout_rate=DROPOUT_RATE,
-                weight_decay=WEIGHT_DECAY)
+        model = ResNet50(run_id=run_id, 
+                        label_smooth_factor=LABEL_SMOOTHING,
+                        img_width=IMG_WIDTH, 
+                        img_height=IMG_HEIGHT, 
+                        lr=LR, 
+                        dropout_rate=DROPOUT_RATE,
+                        weight_decay=WEIGHT_DECAY)
         # ----------------------------------------      
         
         # Train the model
