@@ -71,8 +71,10 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         y_pred = model.predict(test) # get predicted labels
         y_pred = y_pred.argmax(axis=1) # convert to ints
         
-        confusion_matrix = confusion_matrix(y_true, y_pred)
-        ConfusionMatrixDisplay(confusion_matrix,
+        plt.figure()
+        plt.grid(False)
+        matrix = confusion_matrix(y_true, y_pred)
+        matrix_plot = ConfusionMatrixDisplay(matrix,
                                display_labels=["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"])
         plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
         

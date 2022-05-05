@@ -51,25 +51,25 @@ if __name__ == '__main__':
         #                                  lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
         #                                  batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
-        model = ResNet50_Hosseinzadeh(run_id=run_id, 
-                                    label_smooth_factor=LABEL_SMOOTHING,
-                                    img_width=IMG_WIDTH, 
-                                    img_height=IMG_HEIGHT, 
-                                    lr=LR, 
-                                    dropout_rate=DROPOUT_RATE,
-                                    weight_decay=WEIGHT_DECAY)
+        #model = ResNet50_Hosseinzadeh(run_id=run_id, 
+        #                            label_smooth_factor=LABEL_SMOOTHING,
+        #                            img_width=IMG_WIDTH, 
+        #                            img_height=IMG_HEIGHT, 
+        #                            lr=LR, 
+        #                            dropout_rate=DROPOUT_RATE,
+        #                            weight_decay=WEIGHT_DECAY)
         
-        #model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
-        #                                            label_smooth_factor=0,
-        #                                            img_width=225, 
-        #                                            img_height=300, 
-        #                                            lr=(math.e)**(-5), 
-        #                                            dropout_rate=0.5,
-        #                                            weight_decay=(math.e)**(-5),
-        #                                            min_lr_factor=MIN_LR_FACTOR,
-        #                                           train_size=train_size,
-        #                                            batch_size=BATCH_SIZE,
-        #                                            num_epochs=EPOCHS) 
+        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
+                                                    label_smooth_factor=0,
+                                                    img_width=225, 
+                                                    img_height=300, 
+                                                    lr=(math.e)**(-5), 
+                                                    dropout_rate=0.5,
+                                                    weight_decay=(math.e)**(-5),
+                                                    min_lr_factor=0.01,
+                                                   train_size=train_size,
+                                                    batch_size=BATCH_SIZE,
+                                                    num_epochs=EPOCHS) 
         # ----------------------------------------      
         
         # Train the model

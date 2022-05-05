@@ -270,7 +270,13 @@ def ResNet152V2_Rahman(model_name):
 
 
 
-def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
+def ResNet50(run_id="Hoss", 
+            label_smooth_factor=0,
+            img_width=225, 
+            img_height=300, 
+            lr=0.0001, 
+            dropout_rate=0.5,
+            weight_decay=(math.e)**(-5)):
     """
     Creates a Keras model and from a base pre-trained model and newly defined output layers.
     Compiles the model with defined optimizer, loss and metrics.
@@ -285,34 +291,24 @@ def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
                                                       input_shape=(img_width,img_height,3))
     
     
-    base_model.trainable = False 
-    '''
-    # Define output layers 
+    base_model.trainable = True 
+    
+    # Define output layers (Mahbod et al. used here)
     x = base_model.output
     x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(units=64, activation="relu")(x)
-    predictions = keras.layers.Dense(units=3, activation="softmax")(x)
+    x = keras.layers.Dense(units=64, 
+                           activation="relu")(x)
+    predictions = keras.layers.Dense(units=7, activation="softmax")(x)
 
     # Create model using forzen base layers and new FC layers
     model = keras.models.Model(inputs=base_model.input, 
                                outputs=predictions, 
                                name=run_id) 
-    '''
-    inputs = keras.Input(shape=(img_width,img_height,3))
-    x = keras.applications.resnet50.preprocess_input(inputs)
-    x = base_model(inputs, training=False)
-    x = keras.layers.GlobalAveragePooling2D()(x)
-    x = keras.layers.Dense(units=64, activation="relu")(x)
-    outputs = keras.layers.Dense(units=3, activation="softmax")(x)
-    
-    model = keras.Model(inputs=inputs, 
-                               outputs=outputs, 
-                               name=run_id) 
 
     # OPTIMIZERS
     # -------------------------------------
     # Standard Optimizer
-    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
     #optimizer = keras.optimizers.SGD(learning_rate=0.001, momentum=0.9)
     #optimizer = keras.optimizers.RMSprop(learning_rate=0.0001)
     # ---------------------------
@@ -330,8 +326,7 @@ def ResNet50(run_id, label_smooth_factor=0, img_width=224, img_height=224):
     # -------------------------------------
     model.compile(optimizer=optimizer ,
                 loss=loss_func ,
-                metrics=metrics_list,
-                run_eagerly=True)
+                metrics=metrics_list)
     
     return model
 
