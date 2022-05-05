@@ -11,8 +11,8 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Hoss_conf_test"
-        EPOCHS = 3
+        run_id = "Hoss_conf_display_test"
+        EPOCHS = 1
         BATCH_SIZE = 64
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
         DATASET = "HAM10000" # ISIC / HAM10000
@@ -46,18 +46,18 @@ if __name__ == '__main__':
         #                                   lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
         #                                   batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
-        model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
-                                          img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
-                                           lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
-                                           batch_size=BATCH_SIZE, num_epochs=EPOCHS)
+        #model = Mahbod_Resnet50_CosineLRDecay(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
+        #                                  img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
+        #                                  lr=LR, dropout_rate=DROPOUT_RATE, train_size=train_size, 
+        #                                  batch_size=BATCH_SIZE, num_epochs=EPOCHS)
         
-        #model = ResNet50_Hosseinzadeh(run_id=run_id, 
-        #                            label_smooth_factor=LABEL_SMOOTHING,
-        #                            img_width=IMG_WIDTH, 
-        #                            img_height=IMG_HEIGHT, 
-        #                            lr=LR, 
-        #                            dropout_rate=DROPOUT_RATE,
-        #                            weight_decay=WEIGHT_DECAY)
+        model = ResNet50_Hosseinzadeh(run_id=run_id, 
+                                    label_smooth_factor=LABEL_SMOOTHING,
+                                    img_width=IMG_WIDTH, 
+                                    img_height=IMG_HEIGHT, 
+                                    lr=LR, 
+                                    dropout_rate=DROPOUT_RATE,
+                                    weight_decay=WEIGHT_DECAY)
         
         #model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
         #                                            label_smooth_factor=0,

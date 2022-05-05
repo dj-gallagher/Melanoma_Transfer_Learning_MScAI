@@ -250,7 +250,7 @@ def hoss_preprocess_augment_dataset(ds_other, ds_other_size, ds_nev, ds_nev_size
         ds_size = ds_other_size + ds_nev_size
         
         # batch and prefetch (no repeat needed for test set)
-        ds = ds.batch(batch_size).prefetch(ds_size//batch_size)
+        ds = ds.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
     
     return ds, ds_size
 

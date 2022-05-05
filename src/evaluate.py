@@ -1,9 +1,9 @@
 from src.preprocessing import read_test_csv_to_dataset, read_HAM10000_csv_to_dataset2, rescale_and_resize, mahdbod_preprocess_augment_dataset, hoss_preprocess_augment_dataset
 import pandas as pd
 
-
+import matplotlib.pyplot as plt
 from math import ceil
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 import numpy as np
 
 def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_width, img_height):
@@ -63,7 +63,7 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         metrics_dict = model.evaluate(test, return_dict=True) # dict with keys-metrics, values=metric vals
         
         y_true = [] # get true labels
-        for img, label in test:
+        for img, label in test.unbatch(): # unbatch so all test samples are iter'd through, not just first batch
             int_label = np.argmax(label.numpy()) # need int labels for confusion matrix
             y_true.append(int_label)
         
@@ -71,8 +71,10 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         y_pred = model.predict(test) # get predicted labels
         y_pred = y_pred.argmax(axis=1) # convert to ints
         
-        matrix = confusion_matrix(y_true, y_pred)
-        np.savetxt("./output/results/{model.name}/conf_matrix.csv", matrix, delimiter=",")
+        ConfusionMatrixDisplay(y_true, y_pred)
+        plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
+        
+        #np.savetxt(f"./output/results/{model.name}/conf_matrix.csv", matrix, delimiter=",")
         
         
         
