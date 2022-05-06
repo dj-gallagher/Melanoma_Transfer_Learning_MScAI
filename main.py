@@ -11,7 +11,7 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Resnet_DR_2"
+        run_id = "Hoss_BL2_1"
         EPOCHS = 15
         BATCH_SIZE = 32
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
@@ -19,7 +19,7 @@ if __name__ == '__main__':
         LABEL_SMOOTHING = 0
         IMG_WIDTH = 225
         IMG_HEIGHT = 300
-        LR = (math.e)**(-5)
+        LR = 0.0001
         DROPOUT_RATE = 0.5
         LR_SCHEDULE = False
         WEIGHT_DECAY = 0.0001
@@ -59,25 +59,25 @@ if __name__ == '__main__':
         #                            dropout_rate=DROPOUT_RATE,
         #                            weight_decay=WEIGHT_DECAY)
         
-        """model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
-                                                    label_smooth_factor=0,
-                                                    img_width=225, 
-                                                    img_height=300, 
-                                                    lr=(math.e)**(-5), 
+        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
+                                                    label_smooth_factor=LABEL_SMOOTHING,
+                                                    img_width=IMG_WIDTH, 
+                                                    img_height=IMG_HEIGHT, 
+                                                    lr=LR, 
                                                     dropout_rate=0.5,
-                                                    weight_decay=(math.e)**(-5),
+                                                    weight_decay=WEIGHT_DECAY,
                                                     min_lr_factor=0.01,
                                                    train_size=train_size,
                                                     batch_size=BATCH_SIZE,
-                                                    num_epochs=EPOCHS)"""
+                                                    num_epochs=EPOCHS)
         
-        model = ResNet50(run_id=run_id, 
-                        label_smooth_factor=LABEL_SMOOTHING,
-                        img_width=IMG_WIDTH, 
-                        img_height=IMG_HEIGHT, 
-                        lr=LR, 
-                        dropout_rate=DROPOUT_RATE,
-                        weight_decay=WEIGHT_DECAY)
+        #model = ResNet50(run_id=run_id, 
+        #                label_smooth_factor=LABEL_SMOOTHING,
+        #                img_width=IMG_WIDTH, 
+        #                img_height=IMG_HEIGHT, 
+        #                lr=LR, 
+        #                dropout_rate=DROPOUT_RATE,
+        #                weight_decay=WEIGHT_DECAY)
         # ----------------------------------------      
         
         # Train the model
