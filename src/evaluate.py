@@ -33,9 +33,14 @@ def evaluate_model(model, dataset, batch_size, num_epochs, augmentation, img_wid
         y_pred = model.predict(test) # get predicted labels
         y_pred = y_pred.argmax(axis=1) # convert to ints
         
+        y_true_list = [] # get true labels
+        for img, label in test.unbatch(): # unbatch so all test samples are iter'd through, not just first batch
+            int_label = np.argmax(label.numpy()) # need int labels for confusion matrix
+            y_true_list.append(int_label)
+        
         plt.figure()
         plt.grid(False)
-        matrix = confusion_matrix(y_true, y_pred)
+        matrix = confusion_matrix(y_true_list, y_pred)
         matrix_plot = ConfusionMatrixDisplay(matrix,
                                display_labels=["mel", "seb_ker", "nevus"]).plot()
         plt.savefig(f"./output/results/{model.name}/conf_matrix.png")
