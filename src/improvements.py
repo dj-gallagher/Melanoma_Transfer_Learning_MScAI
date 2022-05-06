@@ -216,7 +216,8 @@ def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss",
                                         min_lr_factor=0.01,
                                         train_size=0,
                                         batch_size=32,
-                                        num_epochs=15):
+                                        num_epochs=15,
+                                        reg_param=0.0001):
     
     # DEFINING MODEL LAYERS
     # ---------------------------
@@ -241,7 +242,7 @@ def Hosseinzadeh_ResNet50_CosineLRDecay(run_id="Hoss",
 
     
     # Add L2 regularization to all layers - Source: https://sthalles.github.io/keras-regularizer/
-    regularizer = tf.keras.regularizers.l2(l=0.0001)
+    regularizer = tf.keras.regularizers.l2(l=reg_param)
     model = add_regularization(model=model, regularizer=regularizer)
     
     # OPTIMIZERS

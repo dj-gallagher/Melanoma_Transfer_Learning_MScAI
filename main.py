@@ -11,7 +11,7 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Hoss_BL2_1"
+        run_id = "Hoss_DWD2_1"
         EPOCHS = 15
         BATCH_SIZE = 32
         AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
@@ -22,8 +22,9 @@ if __name__ == '__main__':
         LR = 0.0001
         DROPOUT_RATE = 0.5
         LR_SCHEDULE = False
-        WEIGHT_DECAY = 0.0001
+        WEIGHT_DECAY = 0.1*0.0001
         MIN_LR_FACTOR = 0
+        REG_PARAM = 0.1*0.0001
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE,
@@ -69,7 +70,8 @@ if __name__ == '__main__':
                                                     min_lr_factor=0.01,
                                                    train_size=train_size,
                                                     batch_size=BATCH_SIZE,
-                                                    num_epochs=EPOCHS)
+                                                    num_epochs=EPOCHS,
+                                                    reg_param=REG_PARAM)
         
         #model = ResNet50(run_id=run_id, 
         #                label_smooth_factor=LABEL_SMOOTHING,
