@@ -11,20 +11,20 @@ import math
 if __name__ == '__main__':
     
     with  tf.device("/gpu:0"):
-        run_id = "Hoss_DWD2_1"
+        run_id = "Mahbod_BL_CONF"
         EPOCHS = 15
-        BATCH_SIZE = 32
-        AUGMENTATION = "Hosseinzadeh" # Mahbod / Hosseinzadeh
-        DATASET = "HAM10000" # ISIC / HAM10000
+        BATCH_SIZE = 64
+        AUGMENTATION = "Mahbod" # Mahbod / Hosseinzadeh
+        DATASET = "ISIC" # ISIC / HAM10000
         LABEL_SMOOTHING = 0
-        IMG_WIDTH = 225
-        IMG_HEIGHT = 300
-        LR = 0.0001
-        DROPOUT_RATE = 0.5
-        LR_SCHEDULE = False
-        WEIGHT_DECAY = 0.1*0.0001
+        IMG_WIDTH = 128
+        IMG_HEIGHT = 128
+        LR = 0.001
+        DROPOUT_RATE = 0
+        LR_SCHEDULE = True
+        WEIGHT_DECAY = 0
         MIN_LR_FACTOR = 0
-        REG_PARAM = 0.1*0.0001
+        REG_PARAM = 0
         
         # Create training and validation sets from metadata and images folder
         train, train_size, val, val_size = run_preprocessing(batch_size=BATCH_SIZE,
@@ -39,8 +39,8 @@ if __name__ == '__main__':
         
         # Create a model, pass run id as arguement
         # ----------------------------------------
-        #model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
-        #                       img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
+        model = ResNet50_Mahbod(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
+                               img_width=IMG_WIDTH, img_height=IMG_HEIGHT, lr=LR)
         
         #model = Mahbod_ResNet50_Dropout(run_id=run_id, label_smooth_factor=LABEL_SMOOTHING, 
         #                                  img_width=IMG_WIDTH, img_height=IMG_HEIGHT, 
@@ -60,18 +60,18 @@ if __name__ == '__main__':
         #                            dropout_rate=DROPOUT_RATE,
         #                            weight_decay=WEIGHT_DECAY)
         
-        model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
-                                                    label_smooth_factor=LABEL_SMOOTHING,
-                                                    img_width=IMG_WIDTH, 
-                                                    img_height=IMG_HEIGHT, 
-                                                    lr=LR, 
-                                                    dropout_rate=0.5,
-                                                    weight_decay=WEIGHT_DECAY,
-                                                    min_lr_factor=0.01,
-                                                   train_size=train_size,
-                                                    batch_size=BATCH_SIZE,
-                                                    num_epochs=EPOCHS,
-                                                    reg_param=REG_PARAM)
+        #model = Hosseinzadeh_ResNet50_CosineLRDecay(run_id=run_id, 
+        #                                            label_smooth_factor=LABEL_SMOOTHING,
+        #                                            img_width=IMG_WIDTH, 
+        #                                            img_height=IMG_HEIGHT, 
+        #                                            lr=LR, 
+        #                                            dropout_rate=0.5,
+        #                                            weight_decay=WEIGHT_DECAY,
+        #                                            min_lr_factor=0.01,
+        #                                           train_size=train_size,
+        #                                            batch_size=BATCH_SIZE,
+        #                                            num_epochs=EPOCHS,
+        #                                            reg_param=REG_PARAM)
         
         #model = ResNet50(run_id=run_id, 
         #                label_smooth_factor=LABEL_SMOOTHING,
